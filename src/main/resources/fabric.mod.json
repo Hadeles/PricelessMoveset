@@ -1,16 +1,16 @@
 {
   "schemaVersion": 1,
-  "id": "terrarianplatforms",
+  "id": "pricelessmoveset",
   "version": "${version}",
 
-  "name": "Terrarian Platforms",
-  "description": "Adds platforms from Terraria into Minecraft",
+  "name": "Priceless Moveset",
+  "description": "adds more abilities to the game",
   "authors": [
     "Hadeles_"
   ],
   "contact": {
     "homepage": "https://github.com/Hadeles",
-    "sources": "https://github.com/Hadeles/TerrarianPlatforms"
+    "sources": "https://github.com/Hadeles/pricelessmoveset"
   },
 
   "license": "CC0-1.0",
@@ -19,7 +19,10 @@
   "environment": "*",
   "entrypoints": {
     "main": [
-      "net.fabricmc.terrarianplatforms.TerrarianPlatformsMod"
+      "net.fabricmc.pricelessmoveset.PricelessMoveset"
+    ],
+    "client": [
+      "net.fabricmc.pricelessmoveset.PricelessMovesetClient"
     ]
   },
   "mixins": [

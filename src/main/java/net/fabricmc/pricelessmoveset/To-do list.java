@@ -2,18 +2,6 @@
      * 
      * If there is a number before a to-do list item, that is its priority. 1 is highest, oo is lowest.
      * 
-     * 1 Make mod compatibility with Hookshot (Hooshots will be able to grab onto platforms.)
-     * 
-     * 2 Platforms make the game really laggy (TPS) when placed in the world, possibly due to the fact that every single tick they check for
-     * anything that is currently interacting with them, and also check the stacktrace. Fix me.
-     * 
-	 * 3 When held, Swords do not make the Outline Shape empty. Fix me.
-     * 
-     * 4 Make mod compatibility with BoMD (In case the bosses do not understand platforms.)
-     * 
-     * 5 On the released .jar, mobs fail to see through platforms. Wither/zombie cannot see pig/villager directly below.
-     *   This does not occur in local debug mode.
-     * 
      * 
      * 
      * 
