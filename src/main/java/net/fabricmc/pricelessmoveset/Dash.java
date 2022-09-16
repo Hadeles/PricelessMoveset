@@ -10,15 +10,16 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.text.Text;
 import net.minecraft.text.Texts;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.entity.Entity;
 
 // TODO: rename Dash to Dodge.
 
 public class Dash {
     // Allow other classes to change the cooldown. Dash.DASH_COOLDOWN_TIME
-    public static long DASH_COOLDOWN_TIME = 50;
+    public static long DASH_COOLDOWN_TIME = 40;
     public static long DASH_NO_DRAG_TIME = 1;
-    public static double SPEED = 0.5;
+    public static double SPEED = 1;
     private long lastDashUseTime = 0L;
     private boolean hasNoDrag = false;
     net.minecraft.entity.LivingEntity entity;
@@ -58,6 +59,19 @@ public class Dash {
         }
         // Convert yaw from degrees (above) to radians (below)
         yaw = yaw / 180.0 * Math.PI;
-        entity.addVelocity(-Math.sin(yaw) * SPEED, 0.2, Math.cos(yaw) * SPEED);
+        double ySpeed;
+        if (this.entity.isOnGround()) {ySpeed = 0.3;} else {ySpeed = 0.0;}
+        
+        double groundSpeedHandicap;
+        if (this.entity.isOnGround()) {groundSpeedHandicap = 1;} else {groundSpeedHandicap = 0.5;}
+
+        double sprintSpeedHandicap;
+        if (this.entity.isSprinting()) {sprintSpeedHandicap = 1;} else {sprintSpeedHandicap = 0.8;}
+
+        double dodgeSpeedResult;
+        dodgeSpeedResult = SPEED * groundSpeedHandicap * sprintSpeedHandicap;
+
+        entity.addVelocity(
+                -Math.sin(yaw) * dodgeSpeedResult, ySpeed, Math.cos(yaw) * dodgeSpeedResult);
     }
 }
