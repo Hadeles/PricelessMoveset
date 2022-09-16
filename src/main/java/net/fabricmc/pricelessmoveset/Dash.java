@@ -19,13 +19,26 @@ public class Dash {
     // Allow other classes to change the cooldown. Dash.DASH_COOLDOWN_TIME
     public static long DASH_COOLDOWN_TIME = 40;
     public static long DASH_NO_DRAG_TIME = 1;
-    public static double SPEED = 1;
-    private long lastDashUseTime = 0L;
-    private boolean hasNoDrag = false;
-    net.minecraft.entity.LivingEntity entity;
+    public static double SPEED = 0.6;
+    public long lastDashUseTime = 0L;
+    public boolean hasNoDrag = false;
+    public net.minecraft.entity.LivingEntity entity;
 
     Dash(net.minecraft.entity.LivingEntity entity) {
         this.entity = entity;
+    }
+
+    public void tick() {
+        // Bail out if there is nothing to do.
+        if (!hasNoDrag) return;
+
+        // Bail out if it's too early.
+        long time = entity.getEntityWorld().getTime();
+        if (time <= lastDashUseTime + DASH_NO_DRAG_TIME) return;
+
+        // Remove noDrag state.
+        entity.setNoDrag(false);
+        hasNoDrag = false;
     }
 
     public void dash(
@@ -37,6 +50,9 @@ public class Dash {
         long time = entity.getEntityWorld().getTime();
         if (time <= lastDashUseTime + DASH_COOLDOWN_TIME) return;
         lastDashUseTime = time;
+
+        entity.setNoDrag(true);
+        hasNoDrag = true;
 
         // Dodge according to keys pressed
         double yaw = entity.getYaw();  // Head yaw
@@ -60,13 +76,13 @@ public class Dash {
         // Convert yaw from degrees (above) to radians (below)
         yaw = yaw / 180.0 * Math.PI;
         double ySpeed;
-        if (this.entity.isOnGround()) {ySpeed = 0.3;} else {ySpeed = 0.0;}
+        if (this.entity.isOnGround()) {ySpeed = 0.25;} else {ySpeed = 0.0;}
         
         double groundSpeedHandicap;
         if (this.entity.isOnGround()) {groundSpeedHandicap = 1;} else {groundSpeedHandicap = 0.5;}
 
         double sprintSpeedHandicap;
-        if (this.entity.isSprinting()) {sprintSpeedHandicap = 1;} else {sprintSpeedHandicap = 0.8;}
+        if (this.entity.isSprinting()) {sprintSpeedHandicap = 0.7;} else {sprintSpeedHandicap = 1;}
 
         double dodgeSpeedResult;
         dodgeSpeedResult = SPEED * groundSpeedHandicap * sprintSpeedHandicap;
