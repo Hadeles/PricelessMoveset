@@ -1,27 +1,22 @@
 package net.fabricmc.pricelessmoveset;
 
-import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
-import net.fabricmc.fabric.mixin.client.keybinding.KeyBindingAccessor;
-import net.minecraft.client.option.KeyBinding;
-import net.minecraft.client.util.InputUtil;
+import java.util.List;
+
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.PlayerAbilities;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.text.Text;
-import net.minecraft.text.Texts;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.entity.Entity;
+import net.minecraft.predicate.entity.EntityPredicates;
+import net.minecraft.util.math.MathHelper;
 
 // TODO: rename Dash to Dodge.
 
 public class Dash {
     // Allow other classes to change the cooldown. Dash.DASH_COOLDOWN_TIME
     public static long DASH_COOLDOWN_TIME = 40;
+    public static long DASH_INVULNERABILITY_TIME = 15;
     public static long DASH_NO_DRAG_TIME = 1;
-    public static double SPEED = 0.6;
+    public static double SPEED = 0.7;
     public long lastDashUseTime = 0L;
     public boolean hasNoDrag = false;
+    public boolean hasInvulnerability = false;
     public net.minecraft.entity.LivingEntity entity;
 
     Dash(net.minecraft.entity.LivingEntity entity) {
@@ -29,6 +24,11 @@ public class Dash {
     }
 
     public void tick() {
+        noDragTick();
+        InvulnerabilityTick();
+    }
+
+    public void noDragTick() {
         // Bail out if there is nothing to do.
         if (!hasNoDrag) return;
 
@@ -39,6 +39,64 @@ public class Dash {
         // Remove noDrag state.
         entity.setNoDrag(false);
         hasNoDrag = false;
+    }
+
+    public void InvulnerabilityTick() {
+        // Bail out if there is nothing to do.
+        if (!hasInvulnerability) return;
+
+        // Cancel out tick cramming for this entity.
+        // If only we could change isPushable! oh well.
+        antiTickCramming();
+
+        // Bail out if it's too early.
+        long time = entity.getEntityWorld().getTime();
+        if (time <= lastDashUseTime + DASH_INVULNERABILITY_TIME) return;
+
+        // Remove invulerable state.
+        entity.setInvulnerable( false);
+        hasInvulnerability = false;
+    }
+
+    // LivingEntity::tickCramming, but pullTowards instead of pushAway.
+    public void antiTickCramming() {
+        List<Entity> list = entity.world.getOtherEntities(entity, entity.getBoundingBox(), EntityPredicates.canBePushedBy(entity));
+        for (int j = 0; j < list.size(); ++j) {
+            Entity entity2 = list.get(j);
+            pullTowards(this.entity, entity2);
+        }
+    }
+
+    // Entity::pushAwayFrom, but in reverse.
+    public void pullTowards(Entity entity, Entity entity2) {
+        double e;
+        if (entity.isConnectedThroughVehicle(entity2)) {
+            return;
+        }
+        if (entity2.noClip || entity.noClip) {
+            return;
+        }
+        double d = entity2.getX() - entity.getX();
+        double f = MathHelper.absMax(d, e = entity2.getZ() - entity.getZ());
+        if (f >= (double)0.01f) {
+            f = Math.sqrt(f);
+            d /= f;
+            e /= f;
+            double g = 1.0 / f;
+            if (g > 1.0) {
+                g = 1.0;
+            }
+            d *= g;
+            e *= g;
+            d *= (double)0.05f;
+            e *= (double)0.05f;
+            if (!entity.hasPassengers() && entity.isPushable()) {
+                entity.addVelocity(d, 0.0, e);
+            }
+            if (!entity2.hasPassengers() && entity2.isPushable()) {
+                entity2.addVelocity(-d, 0.0, -e);
+            }
+        }
     }
 
     public void dash(
@@ -52,7 +110,9 @@ public class Dash {
         lastDashUseTime = time;
 
         entity.setNoDrag(true);
+        entity.setInvulnerable(true);
         hasNoDrag = true;
+        hasInvulnerability = true;
 
         // Dodge according to keys pressed
         double yaw = entity.getYaw();  // Head yaw
@@ -79,7 +139,7 @@ public class Dash {
         if (this.entity.isOnGround()) {ySpeed = 0.25;} else {ySpeed = 0.0;}
         
         double groundSpeedHandicap;
-        if (this.entity.isOnGround()) {groundSpeedHandicap = 1;} else {groundSpeedHandicap = 0.5;}
+        if (this.entity.isOnGround()) {groundSpeedHandicap = 1;} else {groundSpeedHandicap = 0.6;}
 
         double sprintSpeedHandicap;
         if (this.entity.isSprinting()) {sprintSpeedHandicap = 0.7;} else {sprintSpeedHandicap = 1;}
