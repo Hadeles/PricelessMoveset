@@ -1,13 +1,11 @@
 package net.fabricmc.pricelessmoveset;
 
-import net.fabricmc.api.ModInitializer;
-import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
-import net.minecraft.client.option.KeyBinding;
-import net.minecraft.client.util.InputUtil;
-
-import org.lwjgl.glfw.GLFW;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+import net.minecraft.client.option.KeyBinding;
 
 public class PricelessMoveset implements ModInitializer {
 	
@@ -26,5 +24,12 @@ public class PricelessMoveset implements ModInitializer {
 		// This code runs as soon as Minecraft is in a mod-load-ready state.
 		// However, some things (like resources) may still be uninitialized.
 		// Proceed with mild caution.
+
+		ServerPlayNetworking.registerGlobalReceiver(
+			Dash.DASH_CHANNEL_ID,
+			(server, player, handler, buf, responseSender) -> {
+				boolean invulnerable = buf.readBoolean();
+				player.setInvulnerable(invulnerable);
+			});
 	}
 }

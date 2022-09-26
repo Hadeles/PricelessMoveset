@@ -1,24 +1,21 @@
 package net.fabricmc.pricelessmoveset;
 
+import java.util.HashMap;
+
 import org.lwjgl.glfw.GLFW;
 
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
+import net.minecraft.client.network.ClientPlayerEntity;
+import net.minecraft.client.option.GameOptions;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
-import net.minecraft.text.LiteralTextContent;
 import net.minecraft.text.Text;
-import net.minecraft.text.Texts;
-import net.minecraft.client.*;
-import net.fabricmc.pricelessmoveset.Dash;
-import java.util.HashMap;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.client.option.GameOptions;
 
 public class PricelessMovesetClient implements ClientModInitializer {
 	public static boolean dashKeybindIsPressedPreviousTick = false;
-	public HashMap<Integer, Dash> dashMap = new HashMap<Integer, Dash>();
+	public static HashMap<Integer, Dash> dashMap = new HashMap<Integer, Dash>();
 
 	@Override
 	public void onInitializeClient() {
@@ -34,7 +31,7 @@ public class PricelessMovesetClient implements ClientModInitializer {
 		KeyBindingHelper.registerKeyBinding(dashKeybind);
 
 		ClientTickEvents.END_CLIENT_TICK.register(client -> {
-			LivingEntity entity = client.player;
+			ClientPlayerEntity entity = client.player;
 			if (entity == null) return;
 
 			// The world's smallest registry
