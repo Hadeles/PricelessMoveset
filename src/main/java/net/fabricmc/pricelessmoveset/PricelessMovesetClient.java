@@ -7,6 +7,7 @@ import org.lwjgl.glfw.GLFW;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
+import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.option.GameOptions;
 import net.minecraft.client.option.KeyBinding;
@@ -16,12 +17,16 @@ import net.minecraft.text.Text;
 public class PricelessMovesetClient implements ClientModInitializer {
 	public static boolean dashKeybindIsPressedPreviousTick = false;
 	public static HashMap<Integer, Dash> dashMap = new HashMap<Integer, Dash>();
+	public static StaminaRenderer staminaRenderer = new StaminaRenderer();
 
 	@Override
 	public void onInitializeClient() {
 		// This code runs as soon as Minecraft is in a mod-load-ready state.
 		// However, some things (like resources) may still be uninitialized.
 		// Proceed with mild caution.
+
+		HudRenderCallback.EVENT.register(staminaRenderer);
+
 		KeyBinding dashKeybind = new KeyBinding(
 				"key.pricelessmoveset.dash_keybind",
 				InputUtil.Type.KEYSYM,
