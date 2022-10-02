@@ -45,7 +45,7 @@ public class PricelessMovesetClient implements ClientModInitializer {
 				int id = entity.getId();
 				dash = dashMap.get(id);
 				if (dash == null) {
-					dash = new Dash(entity);
+					dash = new Dash(entity, staminaRenderer);
 					dashMap.put(id, dash);
 				}
 			}

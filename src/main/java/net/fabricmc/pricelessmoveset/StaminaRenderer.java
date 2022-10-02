@@ -12,6 +12,7 @@ public class StaminaRenderer
 extends DrawableHelper
 implements HudRenderCallback {
     public static Identifier barTexture = new Identifier("pricelessmoveset", "textures/gui/stamina_bar.png");
+	public float fillFraction;
 
 	@Override
     public void onHudRender(MatrixStack matrixStack, float tickDelta) {
@@ -31,8 +32,11 @@ implements HudRenderCallback {
 		// Overdraw the full bar
 		u = 0;
 		v = 0;
-		float fillFraction = 0.75f;  // DEBUGGING
 		int w = (int)(fillFraction * barWidth);
 		drawTexture(matrixStack, x, y, u, v, w, barHeight, textureWidth, textureHeight);
+	}
+
+	public void setFillFraction(float fillFraction) {
+		this.fillFraction = fillFraction;
 	}
 }

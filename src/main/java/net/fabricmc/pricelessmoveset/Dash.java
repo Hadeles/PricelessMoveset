@@ -26,9 +26,11 @@ public class Dash {
     public boolean hasNoDrag = false;
     public boolean hasInvulnerability = false;
     public net.minecraft.client.network.ClientPlayerEntity entity;
+    public StaminaRenderer staminaRenderer;
 
-    Dash(net.minecraft.client.network.ClientPlayerEntity entity) {
+    Dash(net.minecraft.client.network.ClientPlayerEntity entity, StaminaRenderer staminaRenderer) {
         this.entity = entity;
+        this.staminaRenderer = staminaRenderer;
     }
 
     public void tick() {
@@ -37,11 +39,12 @@ public class Dash {
     }
 
     public void noDragTick() {
+        long time = entity.getEntityWorld().getTime();
+
         // Bail out if there is nothing to do.
         if (!hasNoDrag) return;
 
         // Bail out if it's too early.
-        long time = entity.getEntityWorld().getTime();
         if (time <= lastDashUseTime + DASH_NO_DRAG_TIME) return;
 
         // Remove noDrag state.
@@ -50,7 +53,12 @@ public class Dash {
     }
 
     public void invulnerabilityTick() {
-        // Bail out if there is nothing to do.
+        long time = entity.getEntityWorld().getTime();
+        float fillFraction = (float)(time - lastDashUseTime) / (float)(DASH_COOLDOWN_TIME);
+        if (fillFraction > 1.0f) fillFraction = 1.0f;
+        staminaRenderer.setFillFraction(fillFraction);
+
+        // Bail out if there is nothing to do.        
         if (!hasInvulnerability) return;
 
         // Cancel out tick cramming for this entity.
@@ -58,7 +66,6 @@ public class Dash {
         antiTickCramming();
 
         // Bail out if it's too early.
-        long time = entity.getEntityWorld().getTime();
         if (time <= lastDashUseTime + DASH_INVULNERABILITY_TIME) return;
 
         // Remove invulerable state.
