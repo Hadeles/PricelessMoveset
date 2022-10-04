@@ -22,7 +22,8 @@ implements HudRenderCallback {
 		int textureHeight = 81;
 		MinecraftClient client = MinecraftClient.getInstance();
 		int x = client.getWindow().getScaledWidth() / 2 - barWidth - 10;  // Aligned with the armor bar
-		int y = client.getWindow().getScaledHeight() - 59;  // Just above the armor bar
+		int y = client.getWindow().getScaledHeight() - 49;  // Just above the armor bar
+		if (client.player.getArmor() > 0) y = y - 10;
 		RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
 		RenderSystem.setShaderTexture(0, barTexture);
 		// Draw the empty bar below
@@ -34,9 +35,5 @@ implements HudRenderCallback {
 		v = 0;
 		int w = (int)(fillFraction * barWidth);
 		drawTexture(matrixStack, x, y, u, v, w, barHeight, textureWidth, textureHeight);
-	}
-
-	public void setFillFraction(float fillFraction) {
-		this.fillFraction = fillFraction;
 	}
 }

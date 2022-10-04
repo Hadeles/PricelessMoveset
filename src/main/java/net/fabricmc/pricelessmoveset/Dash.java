@@ -56,7 +56,7 @@ public class Dash {
         long time = entity.getEntityWorld().getTime();
         float fillFraction = (float)(time - lastDashUseTime) / (float)(DASH_COOLDOWN_TIME);
         if (fillFraction > 1.0f) fillFraction = 1.0f;
-        staminaRenderer.setFillFraction(fillFraction);
+        staminaRenderer.fillFraction = fillFraction;
 
         // Bail out if there is nothing to do.        
         if (!hasInvulnerability) return;
