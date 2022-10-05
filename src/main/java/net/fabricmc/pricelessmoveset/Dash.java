@@ -3,12 +3,14 @@ package net.fabricmc.pricelessmoveset;
 import java.util.List;
 
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
+import net.minecraft.client.MinecraftClient;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.minecraft.entity.Entity;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.predicate.entity.EntityPredicates;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.client.network.ClientPlayerEntity;
 
 // TODO: rename Dash to Dodge.
 
@@ -25,12 +27,14 @@ public class Dash {
     public long lastDashUseTime = 0L;
     public boolean hasNoDrag = false;
     public boolean hasInvulnerability = false;
-    public net.minecraft.client.network.ClientPlayerEntity entity;
     public StaminaRenderer staminaRenderer;
 
-    Dash(net.minecraft.client.network.ClientPlayerEntity entity, StaminaRenderer staminaRenderer) {
-        this.entity = entity;
+    Dash(StaminaRenderer staminaRenderer) {
         this.staminaRenderer = staminaRenderer;
+    }
+
+    public ClientPlayerEntity getEntity() {
+        return MinecraftClient.getInstance().player;
     }
 
     public void tick() {
@@ -39,7 +43,7 @@ public class Dash {
     }
 
     public void noDragTick() {
-        long time = entity.getEntityWorld().getTime();
+        long time = getEntity().getEntityWorld().getTime();
 
         // Bail out if there is nothing to do.
         if (!hasNoDrag) return;
@@ -48,12 +52,12 @@ public class Dash {
         if (time <= lastDashUseTime + DASH_NO_DRAG_TIME) return;
 
         // Remove noDrag state.
-        entity.setNoDrag(false);
+        getEntity().setNoDrag(false);
         hasNoDrag = false;
     }
 
     public void invulnerabilityTick() {
-        long time = entity.getEntityWorld().getTime();
+        long time = getEntity().getEntityWorld().getTime();
         float fillFraction = (float)(time - lastDashUseTime) / (float)(DASH_COOLDOWN_TIME);
         if (fillFraction > 1.0f) fillFraction = 1.0f;
         staminaRenderer.fillFraction = fillFraction;
@@ -77,29 +81,30 @@ public class Dash {
         PacketByteBuf buf = PacketByteBufs.create();
         buf.writeBoolean(invulnerable);
         ClientPlayNetworking.send(DASH_CHANNEL_ID, buf);
-        entity.setInvulnerable(invulnerable);
+        getEntity().setInvulnerable(invulnerable);
     }
 
     // LivingEntity::tickCramming, but pullTowards instead of pushAway.
     public void antiTickCramming() {
+        ClientPlayerEntity entity = getEntity();
         List<Entity> list = entity.world.getOtherEntities(entity, entity.getBoundingBox(), EntityPredicates.canBePushedBy(entity));
         for (int j = 0; j < list.size(); ++j) {
             Entity entity2 = list.get(j);
-            pullTowards(this.entity, entity2);
+            pullTowards(entity, entity2);
         }
     }
 
     // Entity::pushAwayFrom, but in reverse.
-    public void pullTowards(Entity entity, Entity entity2) {
+    public void pullTowards(Entity entity1, Entity entity2) {
         double e;
-        if (entity.isConnectedThroughVehicle(entity2)) {
+        if (entity1.isConnectedThroughVehicle(entity2)) {
             return;
         }
-        if (entity2.noClip || entity.noClip) {
+        if (entity2.noClip || entity1.noClip) {
             return;
         }
-        double d = entity2.getX() - entity.getX();
-        double f = MathHelper.absMax(d, e = entity2.getZ() - entity.getZ());
+        double d = entity2.getX() - entity1.getX();
+        double f = MathHelper.absMax(d, e = entity2.getZ() - entity1.getZ());
         if (f >= (double)0.01f) {
             f = Math.sqrt(f);
             d /= f;
@@ -112,8 +117,8 @@ public class Dash {
             e *= g;
             d *= (double)0.05f;
             e *= (double)0.05f;
-            if (!entity.hasPassengers() && entity.isPushable()) {
-                entity.addVelocity(d, 0.0, e);
+            if (!entity1.hasPassengers() && entity1.isPushable()) {
+                entity1.addVelocity(d, 0.0, e);
             }
             if (!entity2.hasPassengers() && entity2.isPushable()) {
                 entity2.addVelocity(-d, 0.0, -e);
@@ -126,6 +131,8 @@ public class Dash {
         boolean leftKeyPressed,
         boolean backKeyPressed,
         boolean rightKeyPressed) {
+        ClientPlayerEntity entity = getEntity();
+
         // Check the cooldown first
         long time = entity.getEntityWorld().getTime();
         if (time <= lastDashUseTime + DASH_COOLDOWN_TIME) return;
@@ -157,13 +164,13 @@ public class Dash {
         // Convert yaw from degrees (above) to radians (below)
         yaw = yaw / 180.0 * Math.PI;
         double ySpeed;
-        if (this.entity.isOnGround()) {ySpeed = 0.2;} else {ySpeed = 0.0;}
+        if (entity.isOnGround()) {ySpeed = 0.2;} else {ySpeed = 0.0;}
         
         double groundSpeedHandicap;
-        if (this.entity.isOnGround()) {groundSpeedHandicap = 1;} else {groundSpeedHandicap = 0.6;}
+        if (entity.isOnGround()) {groundSpeedHandicap = 1;} else {groundSpeedHandicap = 0.6;}
 
         double sprintSpeedHandicap;
-        if (this.entity.isSprinting()) {sprintSpeedHandicap = 0.7;} else {sprintSpeedHandicap = 1;}
+        if (entity.isSprinting()) {sprintSpeedHandicap = 0.7;} else {sprintSpeedHandicap = 1;}
 
         double dodgeSpeedResult;
         dodgeSpeedResult = SPEED * groundSpeedHandicap * sprintSpeedHandicap;

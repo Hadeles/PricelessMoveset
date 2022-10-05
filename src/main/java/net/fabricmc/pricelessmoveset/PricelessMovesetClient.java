@@ -1,7 +1,5 @@
 package net.fabricmc.pricelessmoveset;
 
-import java.util.HashMap;
-
 import org.lwjgl.glfw.GLFW;
 
 import net.fabricmc.api.ClientModInitializer;
@@ -16,8 +14,8 @@ import net.minecraft.text.Text;
 
 public class PricelessMovesetClient implements ClientModInitializer {
 	public static boolean dashKeybindIsPressedPreviousTick = false;
-	public static HashMap<Integer, Dash> dashMap = new HashMap<Integer, Dash>();
 	public static StaminaRenderer staminaRenderer = new StaminaRenderer();
+	public static Dash dash = new Dash(staminaRenderer);
 
 	@Override
 	public void onInitializeClient() {
@@ -38,17 +36,6 @@ public class PricelessMovesetClient implements ClientModInitializer {
 		ClientTickEvents.END_CLIENT_TICK.register(client -> {
 			ClientPlayerEntity entity = client.player;
 			if (entity == null) return;
-
-			// The world's smallest registry
-			Dash dash;
-			{
-				int id = entity.getId();
-				dash = dashMap.get(id);
-				if (dash == null) {
-					dash = new Dash(entity, staminaRenderer);
-					dashMap.put(id, dash);
-				}
-			}
 
 			dash.tick();
 
