@@ -14,8 +14,9 @@ import net.minecraft.text.Text;
 
 public class PricelessMovesetClient implements ClientModInitializer {
 	public static boolean dashKeybindIsPressedPreviousTick = false;
-	public static StaminaRenderer staminaRenderer = new StaminaRenderer();
-	public static Dash dash = new Dash(staminaRenderer);
+	public static StaminaModel staminaModel = new StaminaModel();
+	public static StaminaView staminaView = new StaminaView(staminaModel);
+	public static Dash dash = new Dash(staminaModel);
 
 	@Override
 	public void onInitializeClient() {
@@ -23,7 +24,7 @@ public class PricelessMovesetClient implements ClientModInitializer {
 		// However, some things (like resources) may still be uninitialized.
 		// Proceed with mild caution.
 
-		HudRenderCallback.EVENT.register(staminaRenderer);
+		HudRenderCallback.EVENT.register(staminaView);
 
 		KeyBinding dashKeybind = new KeyBinding(
 				"key.pricelessmoveset.dash_keybind",
@@ -37,6 +38,7 @@ public class PricelessMovesetClient implements ClientModInitializer {
 			ClientPlayerEntity entity = client.player;
 			if (entity == null) return;
 
+			staminaModel.tick();
 			dash.tick();
 
 			if (!dashKeybindIsPressedPreviousTick && (dashKeybind.isPressed() || dashKeybind.wasPressed())) {

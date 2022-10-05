@@ -14,8 +14,6 @@ import net.minecraft.client.network.ClientPlayerEntity;
 
 // TODO: rename Dash to Dodge.
 
-// TEST commit - reconnecting local repo from TerrianPlatforms to PricelessMoveset.
-
 public class Dash {
     public static Identifier DASH_CHANNEL_ID = new Identifier("pricelessmoveset:dash_channel");
 
@@ -23,14 +21,15 @@ public class Dash {
     public static long DASH_COOLDOWN_TIME = 40;
     public static long DASH_INVULNERABILITY_TIME = 10;
     public static long DASH_NO_DRAG_TIME = 1;
+    public static int DASH_STAMINA_COST = 25;
     public static double SPEED = 0.6;
     public long lastDashUseTime = 0L;
     public boolean hasNoDrag = false;
     public boolean hasInvulnerability = false;
-    public StaminaRenderer staminaRenderer;
+    public StaminaModel staminaModel;
 
-    Dash(StaminaRenderer staminaRenderer) {
-        this.staminaRenderer = staminaRenderer;
+    Dash(StaminaModel staminaModel) {
+        this.staminaModel = staminaModel;
     }
 
     public ClientPlayerEntity getEntity() {
@@ -58,9 +57,6 @@ public class Dash {
 
     public void invulnerabilityTick() {
         long time = getEntity().getEntityWorld().getTime();
-        float fillFraction = (float)(time - lastDashUseTime) / (float)(DASH_COOLDOWN_TIME);
-        if (fillFraction > 1.0f) fillFraction = 1.0f;
-        staminaRenderer.fillFraction = fillFraction;
 
         // Bail out if there is nothing to do.        
         if (!hasInvulnerability) return;
@@ -136,7 +132,13 @@ public class Dash {
         // Check the cooldown first
         long time = entity.getEntityWorld().getTime();
         if (time <= lastDashUseTime + DASH_COOLDOWN_TIME) return;
+
+        // Have we got enough stamina?
+        if (staminaModel.stamina < DASH_STAMINA_COST) return;
+
+        // OK, do a dash.
         lastDashUseTime = time;
+        staminaModel.stamina -= DASH_STAMINA_COST;
 
         entity.setNoDrag(true);
         hasNoDrag = true;

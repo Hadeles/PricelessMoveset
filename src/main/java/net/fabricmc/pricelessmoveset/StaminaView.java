@@ -8,14 +8,20 @@ import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.Identifier;
 
-public class StaminaRenderer
+public class StaminaView
 extends DrawableHelper
 implements HudRenderCallback {
     public static Identifier barTexture = new Identifier("pricelessmoveset", "textures/gui/stamina_bar.png");
-	public float fillFraction;
+	public StaminaModel staminaModel;
+
+	public StaminaView(StaminaModel staminaModel) {
+		this.staminaModel = staminaModel;
+	}
 
 	@Override
     public void onHudRender(MatrixStack matrixStack, float tickDelta) {
+		float fillFraction = (float)(staminaModel.stamina) / (float)(StaminaModel.MAX_STAMINA);
+
 		// When the stamina bar is full, fade it out.
 		if (fillFraction >= 1.0f) return;
 
