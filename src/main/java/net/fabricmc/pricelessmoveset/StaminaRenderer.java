@@ -16,6 +16,11 @@ implements HudRenderCallback {
 
 	@Override
     public void onHudRender(MatrixStack matrixStack, float tickDelta) {
+		// When the stamina bar is full, fade it out.
+		if (fillFraction >= 1.0f) return;
+
+		// The bar background is 81 x 9. This includes a 1 pixel thick outline.
+		// But the bar fullness, drawn on top, is 79 x 7.
 		int barWidth = 81;
 		int barHeight = 9;
 		int textureWidth = 131;
@@ -26,14 +31,16 @@ implements HudRenderCallback {
 		if (client.player.getArmor() > 0) y = y - 10;
 		RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
 		RenderSystem.setShaderTexture(0, barTexture);
+
 		// Draw the empty bar below
 		int u = 0;
 		int v = 10;
 		drawTexture(matrixStack, x, y, u, v, barWidth, barHeight, textureWidth, textureHeight);
-		// Overdraw the full bar
+
+		// Overdraw the full bar.
 		u = 0;
 		v = 0;
-		int w = (int)(fillFraction * barWidth);
+		int w = (int)(fillFraction * (barWidth - 2) + 1); // Remove the outline
 		drawTexture(matrixStack, x, y, u, v, w, barHeight, textureWidth, textureHeight);
 	}
 }
