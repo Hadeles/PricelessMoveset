@@ -40,6 +40,7 @@ public class PricelessMovesetClient implements ClientModInitializer {
 
 			staminaModel.tick();
 			dodge.tick();
+			AutoSwim.tick();
 
 			if (!dodgeKeybindIsPressedPreviousTick && (dodgeKeybind.isPressed() || dodgeKeybind.wasPressed())) {
 				client.player.sendMessage(Text.literal("Dodge Keybind rising edge!"), false);
