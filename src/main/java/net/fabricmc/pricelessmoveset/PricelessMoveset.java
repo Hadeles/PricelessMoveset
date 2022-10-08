@@ -17,7 +17,7 @@ public class PricelessMoveset implements ModInitializer {
 	public static int[] SEMVER;
 	public static final Logger LOGGER = LoggerFactory.getLogger("pricelessmoveset");
     
-	public static KeyBinding dashKeybind;
+	public static KeyBinding dodgeKeybind;
 
 	@Override
 	public void onInitialize() {
@@ -26,7 +26,7 @@ public class PricelessMoveset implements ModInitializer {
 		// Proceed with mild caution.
 
 		ServerPlayNetworking.registerGlobalReceiver(
-			Dash.DASH_CHANNEL_ID,
+			Dodge.DODGE_CHANNEL_ID,
 			(server, player, handler, buf, responseSender) -> {
 				boolean invulnerable = buf.readBoolean();
 				player.setInvulnerable(invulnerable);

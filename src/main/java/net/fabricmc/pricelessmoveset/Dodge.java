@@ -12,23 +12,21 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.client.network.ClientPlayerEntity;
 
-// TODO: rename Dash to Dodge.
+public class Dodge {
+    public static Identifier DODGE_CHANNEL_ID = new Identifier("pricelessmoveset:dodge_channel");
 
-public class Dash {
-    public static Identifier DASH_CHANNEL_ID = new Identifier("pricelessmoveset:dash_channel");
-
-    // Allow other classes to change the cooldown. Dash.DASH_COOLDOWN_TIME
-    public static long DASH_COOLDOWN_TIME = 50;
-    public static long DASH_INVULNERABILITY_TIME = 10;
-    public static long DASH_NO_DRAG_TIME = 1;
-    public static int DASH_STAMINA_COST = 50;
+    // Allow other classes to change the cooldown. Dodge.Dodge_COOLDOWN_TIME
+    public static long DODGE_COOLDOWN_TIME = 50;
+    public static long DODGE_INVULNERABILITY_TIME = 10;
+    public static long DODGE_NO_DRAG_TIME = 1;
+    public static int DODGE_STAMINA_COST = 50;
     public static double SPEED = 0.6;
-    public long lastDashUseTime = 0L;
+    public long lastDodgeUseTime = 0L;
     public boolean hasNoDrag = false;
     public boolean hasInvulnerability = false;
     public StaminaModel staminaModel;
 
-    Dash(StaminaModel staminaModel) {
+    Dodge(StaminaModel staminaModel) {
         this.staminaModel = staminaModel;
     }
 
@@ -48,7 +46,7 @@ public class Dash {
         if (!hasNoDrag) return;
 
         // Bail out if it's too early.
-        if (time <= lastDashUseTime + DASH_NO_DRAG_TIME) return;
+        if (time <= lastDodgeUseTime + DODGE_NO_DRAG_TIME) return;
 
         // Remove noDrag state.
         getEntity().setNoDrag(false);
@@ -66,17 +64,17 @@ public class Dash {
         antiTickCramming();
 
         // Bail out if it's too early.
-        if (time <= lastDashUseTime + DASH_INVULNERABILITY_TIME) return;
+        if (time <= lastDodgeUseTime + DODGE_INVULNERABILITY_TIME) return;
 
         // Remove invulerable state.
-        setInvulnerableDash(false);
+        setInvulnerableDodge(false);
     }
 
-    public void setInvulnerableDash(boolean invulnerable) {
+    public void setInvulnerableDodge(boolean invulnerable) {
         hasInvulnerability = invulnerable;
         PacketByteBuf buf = PacketByteBufs.create();
         buf.writeBoolean(invulnerable);
-        ClientPlayNetworking.send(DASH_CHANNEL_ID, buf);
+        ClientPlayNetworking.send(DODGE_CHANNEL_ID, buf);
         getEntity().setInvulnerable(invulnerable);
     }
 
@@ -122,7 +120,7 @@ public class Dash {
         }
     }
 
-    public void dash(
+    public void dodge(
         boolean forwardKeyPressed,
         boolean leftKeyPressed,
         boolean backKeyPressed,
@@ -131,18 +129,18 @@ public class Dash {
 
         // Check the cooldown first
         long time = entity.getEntityWorld().getTime();
-        if (time <= lastDashUseTime + DASH_COOLDOWN_TIME) return;
+        if (time <= lastDodgeUseTime + DODGE_COOLDOWN_TIME) return;
 
         // Have we got enough stamina?
-        if (staminaModel.stamina < DASH_STAMINA_COST) return;
+        if (staminaModel.stamina < DODGE_STAMINA_COST) return;
 
-        // OK, do a dash.
-        lastDashUseTime = time;
-        staminaModel.stamina -= DASH_STAMINA_COST;
+        // OK, do a dodge.
+        lastDodgeUseTime = time;
+        staminaModel.stamina -= DODGE_STAMINA_COST;
 
         entity.setNoDrag(true);
         hasNoDrag = true;
-        setInvulnerableDash(true);
+        setInvulnerableDodge(true);
 
         // Dodge according to keys pressed
         double yaw = entity.getYaw();  // Head yaw

@@ -13,10 +13,10 @@ import net.minecraft.client.util.InputUtil;
 import net.minecraft.text.Text;
 
 public class PricelessMovesetClient implements ClientModInitializer {
-	public static boolean dashKeybindIsPressedPreviousTick = false;
+	public static boolean dodgeKeybindIsPressedPreviousTick = false;
 	public static StaminaModel staminaModel = new StaminaModel();
 	public static StaminaView staminaView = new StaminaView(staminaModel);
-	public static Dash dash = new Dash(staminaModel);
+	public static Dodge dodge = new Dodge(staminaModel);
 
 	@Override
 	public void onInitializeClient() {
@@ -26,27 +26,27 @@ public class PricelessMovesetClient implements ClientModInitializer {
 
 		HudRenderCallback.EVENT.register(staminaView);
 
-		KeyBinding dashKeybind = new KeyBinding(
-				"key.pricelessmoveset.dash_keybind",
+		KeyBinding dodgeKeybind = new KeyBinding(
+				"key.pricelessmoveset.dodge_keybind",
 				InputUtil.Type.KEYSYM,
 				GLFW.GLFW_KEY_R,
 				"category." + PricelessMoveset.MODID);
 
-		KeyBindingHelper.registerKeyBinding(dashKeybind);
+		KeyBindingHelper.registerKeyBinding(dodgeKeybind);
 
 		ClientTickEvents.END_CLIENT_TICK.register(client -> {
 			ClientPlayerEntity entity = client.player;
 			if (entity == null) return;
 
 			staminaModel.tick();
-			dash.tick();
+			dodge.tick();
 
-			if (!dashKeybindIsPressedPreviousTick && (dashKeybind.isPressed() || dashKeybind.wasPressed())) {
-				client.player.sendMessage(Text.literal("Dash Keybind rising edge!"), false);
+			if (!dodgeKeybindIsPressedPreviousTick && (dodgeKeybind.isPressed() || dodgeKeybind.wasPressed())) {
+				client.player.sendMessage(Text.literal("Dodge Keybind rising edge!"), false);
 
 				// Detect if other WASD keys are down
 				GameOptions gameOptions = client.options;
-				dash.dash(
+				dodge.dodge(
 					gameOptions.forwardKey.isPressed(),
 					gameOptions.leftKey.isPressed(),
 					gameOptions.backKey.isPressed(),
@@ -54,11 +54,11 @@ public class PricelessMovesetClient implements ClientModInitializer {
 			}
 
 			// Throw away extra key presses
-			while (dashKeybind.wasPressed()) {
+			while (dodgeKeybind.wasPressed()) {
 			}
 
 			// Remember for next tick, is the key pressed?
-			dashKeybindIsPressedPreviousTick = dashKeybind.isPressed();
+			dodgeKeybindIsPressedPreviousTick = dodgeKeybind.isPressed();
 		});
 	}
 }
