@@ -18,7 +18,7 @@ public class Dash {
     public static Identifier DASH_CHANNEL_ID = new Identifier("pricelessmoveset:dash_channel");
 
     // Allow other classes to change the cooldown. Dash.DASH_COOLDOWN_TIME
-    public static long DASH_COOLDOWN_TIME = 40;
+    public static long DASH_COOLDOWN_TIME = 50;
     public static long DASH_INVULNERABILITY_TIME = 10;
     public static long DASH_NO_DRAG_TIME = 1;
     public static int DASH_STAMINA_COST = 25;
