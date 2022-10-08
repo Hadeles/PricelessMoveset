@@ -26,7 +26,7 @@ public class PricelessMoveset implements ModInitializer {
 		// Proceed with mild caution.
 
 		ServerPlayNetworking.registerGlobalReceiver(
-			Dodge.DODGE_CHANNEL_ID,
+			Dodge.DODGE_CHANNEL_ID, 
 			(server, player, handler, buf, responseSender) -> {
 				boolean invulnerable = buf.readBoolean();
 				player.setInvulnerable(invulnerable);
