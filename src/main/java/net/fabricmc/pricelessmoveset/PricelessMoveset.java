@@ -4,8 +4,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents.EndTick;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.client.option.KeyBinding;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.network.ServerPlayerEntity;
 
 public class PricelessMoveset implements ModInitializer {
 	
@@ -24,6 +28,12 @@ public class PricelessMoveset implements ModInitializer {
 		// This code runs as soon as Minecraft is in a mod-load-ready state.
 		// However, some things (like resources) may still be uninitialized.
 		// Proceed with mild caution.
+
+		ServerTickEvents.END_SERVER_TICK.register(server -> {
+			server.getPlayerManager().getPlayerList().forEach(player -> {
+				Pogo.tick(player);
+			});
+		});
 
 		ServerPlayNetworking.registerGlobalReceiver(
 			Dodge.DODGE_CHANNEL_ID,
