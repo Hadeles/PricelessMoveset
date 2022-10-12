@@ -4,6 +4,7 @@ import net.minecraft.world.GameMode;
 import net.minecraft.client.MinecraftClient;
 
 // Keep track of the player's stamina.
+// TODO: make stamina at least partially serverside
 public class StaminaModel {
     public static int STAMINA_PER_TICK = 1;
     public static int MAX_STAMINA = 100;

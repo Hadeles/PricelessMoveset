@@ -11,6 +11,7 @@ public class AutoSwim {
         BlockPos blockPos = player.getBlockPos();
         blockPos.add(0, 1, 0);  // Go up 1
         boolean playerBelowWater = client.world.isWater(blockPos);
+        // TODO: test playerBelowWater behaviour
         if (player.isTouchingWater() && player.shouldSwimInFluids() && playerBelowWater && client.options.forwardKey.isPressed()) {
             player.setSprinting(true);
         }
