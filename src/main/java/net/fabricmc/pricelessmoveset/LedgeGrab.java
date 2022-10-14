@@ -13,6 +13,13 @@ import net.minecraft.world.World;
 
 public class LedgeGrab {
     public boolean wasJumpKeyPressed = false;
+    public int LEDGE_GRAB_STAMINA_COST = 25;
+    public StaminaModel staminaModel;
+
+    
+    LedgeGrab(StaminaModel staminaModel) {
+        this.staminaModel = staminaModel;
+    }
 
     public LedgeGrab() {}
 
@@ -29,23 +36,31 @@ public class LedgeGrab {
 
         // Is the player on the ground.
         ClientPlayerEntity player = client.player;
-        if (player.isOnGround()) return;
+        if (player.isOnGround()) return;  // TODO: this is a bug
 
         // Is the player next to a ledge.
         if (!isNearLedge(player.getBlockPos())) return;
 
+        // Have we got enough stamina?
+        if (staminaModel.stamina < LEDGE_GRAB_STAMINA_COST) return;
+
+        // OK, ledge grab.
+        staminaModel.stamina -= LEDGE_GRAB_STAMINA_COST;
+
         // Do a jump.
-        player.setVelocity(0.0f, 0.42f, 0.0f);
+        player.setVelocity(player.getVelocity().x, 0.4f, player.getVelocity().z);
         player.addExhaustion(3);
     }
 
     public boolean isNearLedge(BlockPos blockPos) {
         return
-            isLedge(blockPos.add(-1, 0, 0)) ||
-            isLedge(blockPos.add(+1, 0, 0)) ||
-            isLedge(blockPos.add(0, 0, 0)) ||
-            isLedge(blockPos.add(0, 0, -1)) ||
-            isLedge(blockPos.add(0, 0, 1));
+            (
+                isLedge(blockPos.add(-1, 0, 0)) ||
+                isLedge(blockPos.add(+1, 0, 0)) ||
+                isLedge(blockPos.add(0, 0, 0)) ||
+                isLedge(blockPos.add(0, 0, -1)) ||
+                isLedge(blockPos.add(0, 0, 1))
+            ) && isEmpty(blockPos.add(0, -1, 0));
     }
 
     public boolean isLedge(BlockPos blockPos) {
