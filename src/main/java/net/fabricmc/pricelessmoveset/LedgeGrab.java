@@ -12,14 +12,20 @@ import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.world.World;
 
 public class LedgeGrab {
+    public boolean wasJumpKeyPressed = false;
+
     public LedgeGrab() {}
 
     public void tick() {        
         MinecraftClient client = MinecraftClient.getInstance();
 
-        // Is the player trying to jump?
+        // Rising edge detection
         GameOptions gameOptions = client.options;
-        if (!gameOptions.jumpKey.isPressed()) return;
+        boolean jumpKeyIsPressed = gameOptions.jumpKey.isPressed();
+        boolean jumpKeyNewlyPressed = !wasJumpKeyPressed && jumpKeyIsPressed;
+        wasJumpKeyPressed = jumpKeyIsPressed;
+
+        if (!jumpKeyNewlyPressed) return;
 
         // Is the player on the ground.
         ClientPlayerEntity player = client.player;
@@ -29,7 +35,7 @@ public class LedgeGrab {
         if (!isNearLedge(player.getBlockPos())) return;
 
         // Do a jump.
-        player.setVelocity(0.0f, 0.3f, 0.0f);
+        player.setVelocity(0.0f, 0.42f, 0.0f);
     }
 
     public boolean isNearLedge(BlockPos blockPos) {

@@ -30,6 +30,7 @@ public class PricelessMovesetClient implements ClientModInitializer {
 		HudRenderCallback.EVENT.register(staminaView);
 
 		ClientTickEvents.END_CLIENT_TICK.register(client -> {
+			// Don't run until there is an entity. There lies madness!
 			ClientPlayerEntity entity = client.player;
 			if (entity == null) return;
 
