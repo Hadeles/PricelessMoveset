@@ -11,7 +11,9 @@ import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.world.World;
 
 public class LedgeGrab {
-    public static void tick(boolean jumpKey) {
+    public LedgeGrab() {}
+
+    public void tick(boolean jumpKey) {
         // Is the player trying to jump?
         if (!jumpKey) return;
 
@@ -24,10 +26,10 @@ public class LedgeGrab {
         if (!isNearLedge(player.getBlockPos())) return;
 
         // Do a jump.
-        player.setVelocity(0.0f, 0.42f, 0.0f);
+        player.setVelocity(0.0f, 0.3f, 0.0f);
     }
 
-    public static boolean isNearLedge(BlockPos blockPos) {
+    public boolean isNearLedge(BlockPos blockPos) {
         return
             isLedge(blockPos.add(-1, 0, 0)) ||
             isLedge(blockPos.add(+1, 0, 0)) ||
@@ -36,11 +38,11 @@ public class LedgeGrab {
             isLedge(blockPos.add(0, 0, 1));
     }
 
-    public static boolean isLedge(BlockPos blockPos) {
+    public boolean isLedge(BlockPos blockPos) {
         return !isEmpty(blockPos) && isEmpty(blockPos.add(0, 1, 0));
     }
 
-    public static boolean isEmpty(BlockPos blockPos) {
+    public boolean isEmpty(BlockPos blockPos) {
         ClientPlayerEntity player = MinecraftClient.getInstance().player;
         World world = player.getWorld();
         BlockState blockState = player.world.getBlockState(blockPos);

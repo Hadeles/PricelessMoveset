@@ -5,7 +5,9 @@ import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.util.math.BlockPos;
 
 public class AutoSwim {
-    public static void tick() {
+    public AutoSwim() {}
+
+    public void tick() {
         MinecraftClient client = MinecraftClient.getInstance();
         ClientPlayerEntity player = client.player;
         BlockPos blockPos = player.getBlockPos();

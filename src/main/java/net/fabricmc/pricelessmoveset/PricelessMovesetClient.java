@@ -19,6 +19,8 @@ public class PricelessMovesetClient implements ClientModInitializer {
 	public static StaminaModel staminaModel = new StaminaModel();
 	public static StaminaView staminaView = new StaminaView(staminaModel);
 	public static Dodge dodge = new Dodge(staminaModel);
+	public static AutoSwim autoSwim = new AutoSwim();
+	public static LedgeGrab ledgeGrab = new LedgeGrab();
 
 	@Override
 	public void onInitializeClient() {
@@ -43,8 +45,8 @@ public class PricelessMovesetClient implements ClientModInitializer {
 			GameOptions gameOptions = client.options;
 			staminaModel.tick();
 			dodge.tick();
-			AutoSwim.tick();
-			LedgeGrab.tick(gameOptions.jumpKey.isPressed());
+			autoSwim.tick();
+			ledgeGrab.tick(gameOptions.jumpKey.isPressed());
 
 			if (!dodgeKeybindIsPressedPreviousTick && (dodgeKeybind.isPressed() || dodgeKeybind.wasPressed())) {
 				client.player.sendMessage(Text.literal("Dodge Keybind rising edge!"), false);
