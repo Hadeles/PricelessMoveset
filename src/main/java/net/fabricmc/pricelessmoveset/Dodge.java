@@ -2,6 +2,9 @@ package net.fabricmc.pricelessmoveset;
 
 import java.util.List;
 
+import org.lwjgl.glfw.GLFW;
+
+import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.client.MinecraftClient;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
@@ -11,6 +14,9 @@ import net.minecraft.predicate.entity.EntityPredicates;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.client.network.ClientPlayerEntity;
+import net.minecraft.client.option.GameOptions;
+import net.minecraft.client.option.KeyBinding;
+import net.minecraft.client.util.InputUtil;
 
 public class Dodge {
     public static Identifier DODGE_CHANNEL_ID = new Identifier("pricelessmoveset:dodge_channel");
@@ -25,18 +31,22 @@ public class Dodge {
     public boolean hasNoDrag = false;
     public boolean hasInvulnerability = false;
     public StaminaModel staminaModel;
+    KeyBinding dodgeKeybind;
+    public boolean keybindIsPressedPreviousTick = false;
 
     Dodge(StaminaModel staminaModel) {
         this.staminaModel = staminaModel;
+
+        dodgeKeybind = new KeyBinding(
+            "key.pricelessmoveset.dodge_keybind",
+            InputUtil.Type.KEYSYM,
+            GLFW.GLFW_KEY_R,
+            "category." + PricelessMoveset.MODID);
+        KeyBindingHelper.registerKeyBinding(dodgeKeybind);
     }
 
     public ClientPlayerEntity getEntity() {
         return MinecraftClient.getInstance().player;
-    }
-
-    public void tick() {
-        noDragTick();
-        invulnerabilityTick();
     }
 
     public void noDragTick() {
@@ -120,11 +130,23 @@ public class Dodge {
         }
     }
 
-    public void dodge(
-        boolean forwardKeyPressed,
-        boolean leftKeyPressed,
-        boolean backKeyPressed,
-        boolean rightKeyPressed) {
+    public void tick() {
+        noDragTick();
+        invulnerabilityTick();
+
+        // Rising edge detection
+        boolean shouldDodge = !keybindIsPressedPreviousTick && (dodgeKeybind.isPressed() || dodgeKeybind.wasPressed());
+        keybindIsPressedPreviousTick = dodgeKeybind.isPressed();
+        if (!shouldDodge) return;
+
+        // Actually dodge
+        MinecraftClient client = MinecraftClient.getInstance();
+        GameOptions gameOptions = client.options;
+        boolean forwardKeyPressed = gameOptions.forwardKey.isPressed();
+        boolean leftKeyPressed = gameOptions.leftKey.isPressed();
+        boolean backKeyPressed = gameOptions.backKey.isPressed();
+        boolean rightKeyPressed = gameOptions.rightKey.isPressed();
+
         ClientPlayerEntity entity = getEntity();
 
         // Check the cooldown first

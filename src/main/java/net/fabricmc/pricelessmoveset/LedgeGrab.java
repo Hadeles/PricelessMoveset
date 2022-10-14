@@ -6,6 +6,7 @@ import net.minecraft.block.EntityShapeContext;
 import net.minecraft.block.ShapeContext;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
+import net.minecraft.client.option.GameOptions;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.world.World;
@@ -13,13 +14,15 @@ import net.minecraft.world.World;
 public class LedgeGrab {
     public LedgeGrab() {}
 
-    public void tick(boolean jumpKey) {
-        // Is the player trying to jump?
-        if (!jumpKey) return;
+    public void tick() {        
+        MinecraftClient client = MinecraftClient.getInstance();
 
-        ClientPlayerEntity player = MinecraftClient.getInstance().player;
+        // Is the player trying to jump?
+        GameOptions gameOptions = client.options;
+        if (!gameOptions.jumpKey.isPressed()) return;
 
         // Is the player on the ground.
+        ClientPlayerEntity player = client.player;
         if (player.isOnGround()) return;
 
         // Is the player next to a ledge.
