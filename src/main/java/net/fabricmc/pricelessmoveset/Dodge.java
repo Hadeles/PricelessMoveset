@@ -199,6 +199,6 @@ public class Dodge {
 
         entity.addVelocity(
                 -Math.sin(yaw) * dodgeSpeedResult, ySpeed, Math.cos(yaw) * dodgeSpeedResult);
-                entity.addExhaustion(10);
+                entity.addExhaustion(5);
     }
 }

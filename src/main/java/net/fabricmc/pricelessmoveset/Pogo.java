@@ -46,5 +46,6 @@ public class Pogo {
     public static void doPogo(ClientPlayerEntity player) {
         // Do a pogo
         player.addVelocity(0.0f, POGO_VELOCITY, 0.0f);
+        player.addExhaustion(2);
     }
 }
