@@ -10,7 +10,7 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
 
 public class Pogo {
-    public static float POGO_VELOCITY = 0.6f;
+    public static float POGO_VELOCITY = 0.5f;
     public static Identifier POGO_CHANNEL_ID = new Identifier("pricelessmoveset:pogo_channel");
     public static HashMap<Integer, Boolean> playerToChargedAttack = new HashMap<Integer, Boolean>();
 
@@ -37,7 +37,7 @@ public class Pogo {
         if (player.getLastAttackTime() != player.age - 1) return;
 
         // Are we above the "attacking"?
-        if (player.getPos().y > attacking.getPos().y + attacking.getHeight() - 1.0f) {
+        if (player.getPos().y > attacking.getPos().y + attacking.getHeight() - 0.5f) {
             // Tell the client to pogo.
             ServerPlayNetworking.send(player, POGO_CHANNEL_ID, PacketByteBufs.empty());
         }

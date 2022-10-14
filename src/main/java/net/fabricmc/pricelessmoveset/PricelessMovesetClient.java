@@ -40,20 +40,22 @@ public class PricelessMovesetClient implements ClientModInitializer {
 			ClientPlayerEntity entity = client.player;
 			if (entity == null) return;
 
+			GameOptions gameOptions = client.options;
 			staminaModel.tick();
 			dodge.tick();
 			AutoSwim.tick();
+			LedgeGrab.tick(gameOptions.jumpKey.isPressed());
 
 			if (!dodgeKeybindIsPressedPreviousTick && (dodgeKeybind.isPressed() || dodgeKeybind.wasPressed())) {
 				client.player.sendMessage(Text.literal("Dodge Keybind rising edge!"), false);
 
 				// Detect if other WASD keys are down
-				GameOptions gameOptions = client.options;
 				dodge.dodge(
 					gameOptions.forwardKey.isPressed(),
 					gameOptions.leftKey.isPressed(),
 					gameOptions.backKey.isPressed(),
 					gameOptions.rightKey.isPressed());
+					
 			}
 
 			// Throw away extra key presses

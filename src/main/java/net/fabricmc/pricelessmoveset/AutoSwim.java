@@ -13,7 +13,7 @@ public class AutoSwim {
         boolean playerBelowWater = client.world.isWater(blockPos);
         // TODO: test playerBelowWater behaviour
         if (player.isTouchingWater() && player.shouldSwimInFluids() && playerBelowWater && client.options.forwardKey.isPressed()) {
-            player.setSprinting(true);
+            //player.setSprinting(true);
         }
 
     }
