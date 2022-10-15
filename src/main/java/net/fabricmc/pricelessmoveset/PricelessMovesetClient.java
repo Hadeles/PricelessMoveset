@@ -10,9 +10,9 @@ public class PricelessMovesetClient implements ClientModInitializer {
 	public static StaminaModel staminaModel = new StaminaModel();
 	public static StaminaView staminaView = new StaminaView(staminaModel);
 	public static Dodge dodge = new Dodge(staminaModel);
-	public static AutoSwim autoSwim = new AutoSwim();
 	public static LedgeGrab ledgeGrab = new LedgeGrab(staminaModel);
 	public static Pogo pogo = new Pogo(staminaModel);
+	// public static AutoSwim autoSwim = new AutoSwim();
 
 	@Override
 	public void onInitializeClient() {
@@ -29,9 +29,9 @@ public class PricelessMovesetClient implements ClientModInitializer {
 
 			staminaModel.tick();
 			dodge.tick();
-			autoSwim.tick();
 			ledgeGrab.tick();
 			dodge.tick();
+			// autoSwim.tick();
 		});
 
 		ClientPlayNetworking.registerGlobalReceiver(
