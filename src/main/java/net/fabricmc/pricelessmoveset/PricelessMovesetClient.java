@@ -12,6 +12,7 @@ public class PricelessMovesetClient implements ClientModInitializer {
 	public static Dodge dodge = new Dodge(staminaModel);
 	public static AutoSwim autoSwim = new AutoSwim();
 	public static LedgeGrab ledgeGrab = new LedgeGrab(staminaModel);
+	public static Pogo pogo = new Pogo(staminaModel);
 
 	@Override
 	public void onInitializeClient() {
@@ -36,7 +37,7 @@ public class PricelessMovesetClient implements ClientModInitializer {
 		ClientPlayNetworking.registerGlobalReceiver(
 			Pogo.POGO_CHANNEL_ID,
 			(client, handler, buf, responseSender) -> {
-				Pogo.doPogo(client.player);
+				pogo.tryPogo(client.player);
 			});
 	}
 }

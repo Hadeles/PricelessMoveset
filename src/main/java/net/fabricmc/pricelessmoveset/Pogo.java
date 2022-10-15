@@ -10,9 +10,15 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
 
 public class Pogo {
+    public static int STAMINA_COST = 15;
     public static float POGO_VELOCITY = 0.5f;
     public static Identifier POGO_CHANNEL_ID = new Identifier("pricelessmoveset:pogo_channel");
     public static HashMap<Integer, Boolean> playerToChargedAttack = new HashMap<Integer, Boolean>();
+    public StaminaModel staminaModel;
+
+    Pogo(StaminaModel staminaModel) {
+        this.staminaModel = staminaModel;
+    }
 
     public static void setChargedAttack(ServerPlayerEntity player, boolean chargedAttack) {
         playerToChargedAttack.put((Integer)(player.getId()), (Boolean)(chargedAttack));
@@ -23,6 +29,7 @@ public class Pogo {
         return result == null ? false : result.booleanValue();
     }
 
+    // Server side only
     public static void tick(ServerPlayerEntity player) {
         // Was this a fully charged attack?
         boolean chargedAttack = getChargedAttack(player);
@@ -38,12 +45,17 @@ public class Pogo {
 
         // Are we above the "attacking"?
         if (player.getPos().y > attacking.getPos().y + attacking.getHeight() - 0.5f) {
-            // Tell the client to pogo.
+            // Tell the client it can try to pogo.
             ServerPlayNetworking.send(player, POGO_CHANNEL_ID, PacketByteBufs.empty());
         }
     }
 
-    public static void doPogo(ClientPlayerEntity player) {
+    // Client side only
+    public void tryPogo(ClientPlayerEntity player) {
+        // Do we have enough stamina?
+        if (staminaModel.stamina < STAMINA_COST) return;
+        staminaModel.stamina -= STAMINA_COST;
+
         // Do a pogo
         player.addVelocity(0.0f, POGO_VELOCITY, 0.0f);
         player.addExhaustion(2);
