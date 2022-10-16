@@ -7,6 +7,7 @@ import net.minecraft.util.hit.EntityHitResult;
 
 public class AutoSwing {
     public boolean attackKeyWasPressed = false;
+    public int tickCounter = 0;
 
     public AutoSwing() {}
 
@@ -25,10 +26,19 @@ public class AutoSwing {
         // The attack cooldown must be over.
         if (client.player.getAttackCooldownProgress(0.5f) < 1.0f) return;
 
-        // Actually attack.
+        /* if rising edge of ^, make a timer of 5 ticks.
+         * if the timer is (rising edge of) over, do v.
+         */
+        ++tickCounter;
+        if (tickCounter < 10) return;
+
+        // Check that we have a target.
         if (client.crosshairTarget == null) return;
         if (!(client.crosshairTarget instanceof EntityHitResult)) return;
+
+        // Actually attack.
         client.interactionManager.attackEntity(client.player, ((EntityHitResult)client.crosshairTarget).getEntity());
         client.player.swingHand(Hand.MAIN_HAND);
+        tickCounter = 0;
     }
 }
