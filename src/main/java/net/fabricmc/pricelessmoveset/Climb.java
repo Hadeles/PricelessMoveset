@@ -17,16 +17,14 @@ import net.minecraft.util.math.Vec3d;
 
 public class Climb {
     public static Identifier CLIMB_CHANNEL_ID = new Identifier("pricelessmoveset:climb_channel");
-    public static enum DIRECTION {
-        NONE,
-        MINX,
-        MAXX,
-        MINZ,
-        MAXZ
-    };
 
     public boolean climbing = false;
-    public DIRECTION direction = DIRECTION.NONE;
+    // Are we touching a wall in the given direction?
+    public boolean touching_MINX = false;
+    public boolean touching_MAXX = false;
+    public boolean touching_MINZ = false;
+    public boolean touching_MAXZ = false;
+
     public StaminaModel staminaModel;
     public KeyBinding climbKeybind;
 
@@ -80,46 +78,30 @@ public class Climb {
             if (forwardKeyPressed) y += 0.1;
             if (backKeyPressed) y -= 0.1;
             if (rightKeyPressed) {
-                switch (direction) {
-                    case MINX:
-                        z -= 0.1;
-                    break;
-                    case MAXX:
-                        z += 0.1;
-                    break;
-                    case MINZ:
-                        x += 0.1;
-                    break;
-                    case MAXZ:
-                        x -= 0.1;
-                    break;
-                    default:
-                }                                
+                if (touching_MINX) z -= 0.1;
+                if (touching_MAXX) z += 0.1;
+                if (touching_MINZ) x += 0.1;
+                if (touching_MAXZ) x -= 0.1;
             }
             if (leftKeyPressed) {
-                switch (direction) {
-                    case MINX:
-                        z += 0.1;
-                    break;
-                    case MAXX:
-                        z -= 0.1;
-                    break;
-                    case MINZ:
-                        x -= 0.1;
-                    break;
-                    case MAXZ:
-                        x += 0.1;
-                    break;
-                    default:
-                }                                
+                if (touching_MINX) z += 0.1;
+                if (touching_MAXX) z -= 0.1;
+                if (touching_MINZ) x -= 0.1;
+                if (touching_MAXZ) x += 0.1;
             }
             client.player.setVelocity(new Vec3d(x, y, z));
         }
     }
 
     public boolean canClimb() {
+        boolean retVal = false;
         MinecraftClient client = MinecraftClient.getInstance();
         ClientPlayerEntity player = client.player;
+
+        touching_MINX = false;
+        touching_MAXX = false;
+        touching_MINZ = false;
+        touching_MAXZ = false;
 
         // Are we toucing a wall?
         // For the 4 cardinal directions:
@@ -130,8 +112,8 @@ public class Climb {
             pos = new Vec3d(pos.x - 0.0001, pos.y, pos.z);
             Box box = player.getDimensions(player.getPose()).getBoxAt(pos);
             if (!client.world.isSpaceEmpty(box)) {
-                direction = DIRECTION.MINX;
-                return true;
+                touching_MINX = true;
+                retVal = true;
             }
         }
         {  // MAXX
@@ -139,8 +121,8 @@ public class Climb {
             pos = new Vec3d(pos.x + 0.0001, pos.y, pos.z);
             Box box = player.getDimensions(player.getPose()).getBoxAt(pos);
             if (!client.world.isSpaceEmpty(box)) {
-                direction = DIRECTION.MAXX;
-                return true;
+                touching_MAXX = true;
+                retVal = true;
             }
         }
         {  // MINZ
@@ -148,8 +130,8 @@ public class Climb {
             pos = new Vec3d(pos.x, pos.y, pos.z - 0.0001);
             Box box = player.getDimensions(player.getPose()).getBoxAt(pos);
             if (!client.world.isSpaceEmpty(box)) {
-                direction = DIRECTION.MINZ;
-                return true;
+                touching_MINZ = true;
+                retVal = true;
             }
         }
         {  // MAXZ
@@ -157,11 +139,11 @@ public class Climb {
             pos = new Vec3d(pos.x, pos.y, pos.z + 0.0001);
             Box box = player.getDimensions(player.getPose()).getBoxAt(pos);
             if (!client.world.isSpaceEmpty(box)) {
-                direction = DIRECTION.MAXZ;
-                return true;
+                touching_MAXZ = true;
+                retVal = true;
             }
         }
-        return false;
+        return retVal;
     }
 
     public void resetFallDistance() {
