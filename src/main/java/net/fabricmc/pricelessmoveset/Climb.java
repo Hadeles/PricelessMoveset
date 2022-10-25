@@ -8,7 +8,6 @@ import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.option.GameOptions;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
-import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
 
@@ -25,7 +24,6 @@ public class Climb {
     public DIRECTION direction = DIRECTION.NONE;
     public StaminaModel staminaModel;
     public KeyBinding climbKeybind;
-
 
     public Climb(StaminaModel staminaModel) {
         this.staminaModel = staminaModel;
@@ -45,17 +43,17 @@ public class Climb {
             // Toggle climbing mode
             if (climbing) {
                 climbing = false;
-
-                client.player.setMovementSpeed((float)client.player.getAttributeValue(EntityAttributes.GENERIC_MOVEMENT_SPEED));
             } else {
                 // See if we can enter climbing mode
                 climbing = canClimb();
-                if (climbing) {
-                    // Tell Minecraft to stop moving the player.
-                    // We'll handle that.
-                    client.player.setMovementSpeed(0.0f);
-                }
             }
+        }
+
+        // Prevent air strafing, to stop drifting away from the wall.
+        if (climbing) {
+            client.player.airStrafingSpeed = 0.0f;
+        } else {
+            client.player.airStrafingSpeed = 0.02f;
         }
 
         if (climbing) {
