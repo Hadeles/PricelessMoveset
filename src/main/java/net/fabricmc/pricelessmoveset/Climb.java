@@ -46,12 +46,11 @@ public class Climb {
         // Consume the keyboard buffer
         while (climbKeybind.wasPressed()) {
             // Toggle climbing mode
-            if (climbing) {
-                climbing = false;
-            } else {
-                // See if we can enter climbing mode
-                climbing = canClimb();
-            }
+            climbing = !climbing;
+        }
+
+        if (canClimb() == false) {
+            climbing = false;
         }
 
         // Prevent air strafing, to stop drifting away from the wall.
