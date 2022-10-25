@@ -3,15 +3,20 @@ package net.fabricmc.pricelessmoveset;
 import org.lwjgl.glfw.GLFW;
 
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
+import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.option.GameOptions;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
+import net.minecraft.network.PacketByteBuf;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
 
 public class Climb {
+    public static Identifier CLIMB_CHANNEL_ID = new Identifier("pricelessmoveset:climb_channel");
     public static enum DIRECTION {
         NONE,
         MINX,
@@ -54,6 +59,12 @@ public class Climb {
             client.player.airStrafingSpeed = 0.0f;
         } else {
             client.player.airStrafingSpeed = 0.02f;
+        }
+
+        // no more "falling from a high place" when you climb down a cliff!
+        if (climbing) {
+            client.player.fallDistance = 0.0f;  // Does nothing?
+            resetFallDistance();
         }
 
         if (climbing) {
@@ -117,7 +128,7 @@ public class Climb {
         // - Verify that the box collides (with the wall)
         {  // MINX
             Vec3d pos = player.getPos();
-            pos = new Vec3d(pos.x - 0.000001, pos.y, pos.z);
+            pos = new Vec3d(pos.x - 0.0001, pos.y, pos.z);
             Box box = player.getDimensions(player.getPose()).getBoxAt(pos);
             if (!client.world.isSpaceEmpty(box)) {
                 direction = DIRECTION.MINX;
@@ -126,7 +137,7 @@ public class Climb {
         }
         {  // MAXX
             Vec3d pos = player.getPos();
-            pos = new Vec3d(pos.x + 0.000001, pos.y, pos.z);
+            pos = new Vec3d(pos.x + 0.0001, pos.y, pos.z);
             Box box = player.getDimensions(player.getPose()).getBoxAt(pos);
             if (!client.world.isSpaceEmpty(box)) {
                 direction = DIRECTION.MAXX;
@@ -135,7 +146,7 @@ public class Climb {
         }
         {  // MINZ
             Vec3d pos = player.getPos();
-            pos = new Vec3d(pos.x, pos.y, pos.z - 0.000001);
+            pos = new Vec3d(pos.x, pos.y, pos.z - 0.0001);
             Box box = player.getDimensions(player.getPose()).getBoxAt(pos);
             if (!client.world.isSpaceEmpty(box)) {
                 direction = DIRECTION.MINZ;
@@ -144,7 +155,7 @@ public class Climb {
         }
         {  // MAXZ
             Vec3d pos = player.getPos();
-            pos = new Vec3d(pos.x, pos.y, pos.z + 0.000001);
+            pos = new Vec3d(pos.x, pos.y, pos.z + 0.0001);
             Box box = player.getDimensions(player.getPose()).getBoxAt(pos);
             if (!client.world.isSpaceEmpty(box)) {
                 direction = DIRECTION.MAXZ;
@@ -152,5 +163,9 @@ public class Climb {
             }
         }
         return false;
+    }
+
+    public void resetFallDistance() {
+        ClientPlayNetworking.send(CLIMB_CHANNEL_ID, PacketByteBufs.empty());
     }
 }

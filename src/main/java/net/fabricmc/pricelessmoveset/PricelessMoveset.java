@@ -38,5 +38,11 @@ public class PricelessMoveset implements ModInitializer {
 				boolean invulnerable = buf.readBoolean();
 				player.setInvulnerable(invulnerable);
 			});
-	}
+
+		ServerPlayNetworking.registerGlobalReceiver(
+			Climb.CLIMB_CHANNEL_ID,
+			(server, player, handler, buf, responseSender) -> {
+				player.fallDistance = 0.0f;
+			});
+		}
 }
