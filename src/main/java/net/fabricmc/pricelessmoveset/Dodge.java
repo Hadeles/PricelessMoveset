@@ -25,7 +25,7 @@ public class Dodge {
     public static long DODGE_COOLDOWN_TIME = 50;
     public static long DODGE_INVULNERABILITY_TIME = 10;
     public static long DODGE_NO_DRAG_TIME = 1;
-    public static int DODGE_STAMINA_COST = 50;
+    public static int DODGE_STAMINA_COST = 25;
     public static double SPEED = 0.5;
     public long lastDodgeUseTime = 0L;
     public boolean hasNoDrag = false;

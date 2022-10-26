@@ -17,6 +17,7 @@ import net.minecraft.util.math.Vec3d;
 
 public class Climb {
     public static Identifier CLIMB_CHANNEL_ID = new Identifier("pricelessmoveset:climb_channel");
+    public static double CLIMBING_SPEED = 0.05;
 
     public boolean climbing = false;
     // Are we touching a wall in the given direction?
@@ -60,9 +61,22 @@ public class Climb {
 
         // no more "falling from a high place" when you climb down a cliff!
         if (climbing) {
-            client.player.fallDistance = 0.0f;  // Does nothing?
+            client.player.fallDistance = 0.0f;  // Does nothing? (sus)
             resetFallDistance();
         }
+
+        // Pause stamina regen while climbing.
+        if (climbing && (staminaModel.staminaPauseTicks <= 1)) { // sus
+            staminaModel.staminaPauseTicks += 1;
+        }
+
+        // No sprint climbing
+        if (climbing) {
+            client.player.setSprinting(false);
+        }
+
+        // Fall down if out of stamina.
+        if (climbing && staminaModel.stamina <= 0) climbing = false;
 
         if (climbing) {
             // Handle WASD keys.
@@ -71,23 +85,29 @@ public class Climb {
             boolean leftKeyPressed = gameOptions.leftKey.isPressed();
             boolean backKeyPressed = gameOptions.backKey.isPressed();
             boolean rightKeyPressed = gameOptions.rightKey.isPressed();
+
+            // Climbing uses stamina.
+            if (climbing && (forwardKeyPressed || leftKeyPressed || backKeyPressed || rightKeyPressed)) {
+                staminaModel.stamina -=1;
+                client.player.addExhaustion(0.05f); // Ben thinks this belongs in StaminaModel.
+            }
     
             double x = 0.0;
             double y = 0.0;
             double z = 0.0;
-            if (forwardKeyPressed) y += 0.1;
-            if (backKeyPressed) y -= 0.1;
+            if (forwardKeyPressed) y += CLIMBING_SPEED;
+            if (backKeyPressed) y -= CLIMBING_SPEED;
             if (rightKeyPressed) {
-                if (touching_MINX) z -= 0.1;
-                if (touching_MAXX) z += 0.1;
-                if (touching_MINZ) x += 0.1;
-                if (touching_MAXZ) x -= 0.1;
+                if (touching_MINX) z -= CLIMBING_SPEED;
+                if (touching_MAXX) z += CLIMBING_SPEED;
+                if (touching_MINZ) x += CLIMBING_SPEED;
+                if (touching_MAXZ) x -= CLIMBING_SPEED;
             }
             if (leftKeyPressed) {
-                if (touching_MINX) z += 0.1;
-                if (touching_MAXX) z -= 0.1;
-                if (touching_MINZ) x -= 0.1;
-                if (touching_MAXZ) x += 0.1;
+                if (touching_MINX) z += CLIMBING_SPEED;
+                if (touching_MAXX) z -= CLIMBING_SPEED;
+                if (touching_MINZ) x -= CLIMBING_SPEED;
+                if (touching_MAXZ) x += CLIMBING_SPEED;
             }
             client.player.setVelocity(new Vec3d(x, y, z));
         }
