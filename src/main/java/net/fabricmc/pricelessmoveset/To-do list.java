@@ -13,12 +13,10 @@
      * 
      * 
      * 
-     * Making other mods after creating Terrarian Platforms:
-     * Make other mods, such as Spin Attack, Priceless Dash, Better Sweeping, Crit Overhaul, More Bows, More Arrows, More Shields,
+     * Making other mods:
+     * Make other mods, such as Better Sweeping, Crit Overhaul, More Bows, More Arrows, More Shields,
 	 * Terrarian Weather, Better Time, and Shockwaves.
 	 * 
-     * Spin Attack is probably possible
-     * Priceless Dash is possible (Origins:Rammling adds a dash keybind to an origin (Origins:Rammling is an Origins mod addon))
      * Better Sweeping is probably possible
      * Crit Overhaul might be possible
      * More Bows is probably possible

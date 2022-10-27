@@ -48,7 +48,7 @@ public class LedgeGrab {
 
         // Do a jump.
         player.setVelocity(player.getVelocity().x, 0.4f, player.getVelocity().z);
-        player.addExhaustion(3);
+        player.addExhaustion(0.5f);
     }
 
     public boolean isNearLedge(BlockPos blockPos) {

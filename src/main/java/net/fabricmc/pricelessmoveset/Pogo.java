@@ -58,6 +58,6 @@ public class Pogo {
 
         // Do a pogo
         player.addVelocity(0.0f, POGO_VELOCITY, 0.0f);
-        player.addExhaustion(2);
+        player.addExhaustion(0.5f);
     }
 }

@@ -10,7 +10,6 @@ import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.option.GameOptions;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
-import net.minecraft.network.PacketByteBuf;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
@@ -86,10 +85,10 @@ public class Climb {
             boolean backKeyPressed = gameOptions.backKey.isPressed();
             boolean rightKeyPressed = gameOptions.rightKey.isPressed();
 
-            // Climbing uses stamina.
+            // Climbing uses stamina and hunger.
             if (climbing && (forwardKeyPressed || leftKeyPressed || backKeyPressed || rightKeyPressed)) {
                 staminaModel.stamina -=1;
-                client.player.addExhaustion(0.05f); // Ben thinks this belongs in StaminaModel.
+                client.player.addExhaustion(0.02f);
             }
     
             double x = 0.0;
@@ -129,7 +128,7 @@ public class Climb {
         // - Verify that the box collides (with the wall)
         {  // MINX
             Vec3d pos = player.getPos();
-            pos = new Vec3d(pos.x - 0.0001, pos.y, pos.z);
+            pos = new Vec3d(pos.x - 0.01, pos.y, pos.z);
             Box box = player.getDimensions(player.getPose()).getBoxAt(pos);
             if (!client.world.isSpaceEmpty(box)) {
                 touching_MINX = true;
@@ -138,7 +137,7 @@ public class Climb {
         }
         {  // MAXX
             Vec3d pos = player.getPos();
-            pos = new Vec3d(pos.x + 0.0001, pos.y, pos.z);
+            pos = new Vec3d(pos.x + 0.01, pos.y, pos.z);
             Box box = player.getDimensions(player.getPose()).getBoxAt(pos);
             if (!client.world.isSpaceEmpty(box)) {
                 touching_MAXX = true;
@@ -147,7 +146,7 @@ public class Climb {
         }
         {  // MINZ
             Vec3d pos = player.getPos();
-            pos = new Vec3d(pos.x, pos.y, pos.z - 0.0001);
+            pos = new Vec3d(pos.x, pos.y, pos.z - 0.01);
             Box box = player.getDimensions(player.getPose()).getBoxAt(pos);
             if (!client.world.isSpaceEmpty(box)) {
                 touching_MINZ = true;
@@ -156,7 +155,7 @@ public class Climb {
         }
         {  // MAXZ
             Vec3d pos = player.getPos();
-            pos = new Vec3d(pos.x, pos.y, pos.z + 0.0001);
+            pos = new Vec3d(pos.x, pos.y, pos.z + 0.01);
             Box box = player.getDimensions(player.getPose()).getBoxAt(pos);
             if (!client.world.isSpaceEmpty(box)) {
                 touching_MAXZ = true;
