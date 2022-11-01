@@ -14,6 +14,7 @@ public class PricelessMovesetClient implements ClientModInitializer {
 	public static Pogo pogo = new Pogo(staminaModel);
 	public static AutoSwing autoSwing = new AutoSwing();
 	public static Climb climb = new Climb(staminaModel);
+	public static SpinAttack spinAttack = new SpinAttack(staminaModel);
 	// public static AutoSwim autoSwim = new AutoSwim();
 
 	@Override
@@ -35,6 +36,7 @@ public class PricelessMovesetClient implements ClientModInitializer {
 			dodge.tick();
 			autoSwing.tick();
 			climb.tick();
+			spinAttack.tick();
 			// autoSwim.tick();
 		});
 

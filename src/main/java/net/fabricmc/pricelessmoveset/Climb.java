@@ -41,6 +41,11 @@ public class Climb {
     public void tick() {
         MinecraftClient client = MinecraftClient.getInstance();
 
+        // Just for the breakpoint.
+        if (climbing && !canClimb()) {
+            PricelessMoveset.LOGGER.info("about to stop climbing");
+        }
+        
         // Consume the keyboard buffer
         while (climbKeybind.wasPressed()) {
             // Toggle climbing mode
@@ -128,7 +133,7 @@ public class Climb {
         // - Verify that the box collides (with the wall)
         {  // MINX
             Vec3d pos = player.getPos();
-            pos = new Vec3d(pos.x - 0.01, pos.y, pos.z);
+            pos = new Vec3d(pos.x - 0.01, pos.y - 0.01, pos.z);
             Box box = player.getDimensions(player.getPose()).getBoxAt(pos);
             if (!client.world.isSpaceEmpty(box)) {
                 touching_MINX = true;
@@ -137,7 +142,7 @@ public class Climb {
         }
         {  // MAXX
             Vec3d pos = player.getPos();
-            pos = new Vec3d(pos.x + 0.01, pos.y, pos.z);
+            pos = new Vec3d(pos.x + 0.01, pos.y - 0.01, pos.z);
             Box box = player.getDimensions(player.getPose()).getBoxAt(pos);
             if (!client.world.isSpaceEmpty(box)) {
                 touching_MAXX = true;
@@ -146,7 +151,7 @@ public class Climb {
         }
         {  // MINZ
             Vec3d pos = player.getPos();
-            pos = new Vec3d(pos.x, pos.y, pos.z - 0.01);
+            pos = new Vec3d(pos.x, pos.y - 0.01, pos.z - 0.01);
             Box box = player.getDimensions(player.getPose()).getBoxAt(pos);
             if (!client.world.isSpaceEmpty(box)) {
                 touching_MINZ = true;
@@ -155,7 +160,7 @@ public class Climb {
         }
         {  // MAXZ
             Vec3d pos = player.getPos();
-            pos = new Vec3d(pos.x, pos.y, pos.z + 0.01);
+            pos = new Vec3d(pos.x, pos.y - 0.01, pos.z + 0.01);
             Box box = player.getDimensions(player.getPose()).getBoxAt(pos);
             if (!client.world.isSpaceEmpty(box)) {
                 touching_MAXZ = true;
