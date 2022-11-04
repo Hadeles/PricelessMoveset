@@ -24,6 +24,10 @@ public class Climb {
     public boolean touching_MAXX = false;
     public boolean touching_MINZ = false;
     public boolean touching_MAXZ = false;
+    public boolean touching_MINXSTART = false;
+    public boolean touching_MAXXSTART = false;
+    public boolean touching_MINZSTART = false;
+    public boolean touching_MAXZSTART = false;
 
     public StaminaModel staminaModel;
     public KeyBinding climbKeybind;
@@ -49,6 +53,7 @@ public class Climb {
         // Consume the keyboard buffer
         while (climbKeybind.wasPressed()) {
             // Toggle climbing mode
+            if (canStartClimb() == false && climbing == false) return;
             climbing = !climbing;
         }
 
@@ -133,7 +138,7 @@ public class Climb {
         // - Verify that the box collides (with the wall)
         {  // MINX
             Vec3d pos = player.getPos();
-            pos = new Vec3d(pos.x - 0.01, pos.y - 0.01, pos.z);
+            pos = new Vec3d(pos.x - 0.01, pos.y - 0.01, pos.z);  // Bug: this lets us start climbing on flat ground.
             Box box = player.getDimensions(player.getPose()).getBoxAt(pos);
             if (!client.world.isSpaceEmpty(box)) {
                 touching_MINX = true;
@@ -164,6 +169,98 @@ public class Climb {
             Box box = player.getDimensions(player.getPose()).getBoxAt(pos);
             if (!client.world.isSpaceEmpty(box)) {
                 touching_MAXZ = true;
+
+                retVal = true;
+            }
+        }
+        {  // MINXSTART
+            Vec3d pos = player.getPos();
+            pos = new Vec3d(pos.x - 0.01, pos.y, pos.z);  // Bug: this lets us start climbing on flat ground.
+            Box box = player.getDimensions(player.getPose()).getBoxAt(pos);
+            if (!client.world.isSpaceEmpty(box)) {
+                touching_MINXSTART = true;
+                retVal = true;
+            }
+        }
+        {  // MAXXSTART
+            Vec3d pos = player.getPos();
+            pos = new Vec3d(pos.x + 0.01, pos.y, pos.z);
+            Box box = player.getDimensions(player.getPose()).getBoxAt(pos);
+            if (!client.world.isSpaceEmpty(box)) {
+                touching_MAXXSTART = true;
+                retVal = true;
+            }
+        }
+        {  // MINZSTART
+            Vec3d pos = player.getPos();
+            pos = new Vec3d(pos.x, pos.y, pos.z - 0.01);
+            Box box = player.getDimensions(player.getPose()).getBoxAt(pos);
+            if (!client.world.isSpaceEmpty(box)) {
+                touching_MINZSTART = true;
+                retVal = true;
+            }
+        }
+        {  // MAXZSTART
+            Vec3d pos = player.getPos();
+            pos = new Vec3d(pos.x, pos.y, pos.z + 0.01);
+            Box box = player.getDimensions(player.getPose()).getBoxAt(pos);
+            if (!client.world.isSpaceEmpty(box)) {
+                touching_MAXZSTART = true;
+                
+                retVal = true;
+            }
+        }
+        return retVal;
+    }
+    public boolean canStartClimb() {
+        boolean retVal = false;
+        MinecraftClient client = MinecraftClient.getInstance();
+        ClientPlayerEntity player = client.player;
+
+        touching_MINXSTART = false;
+        touching_MAXXSTART = false;
+        touching_MINZSTART = false;
+        touching_MAXZSTART = false;
+
+        // Are we toucing a wall?
+        // For the 4 cardinal directions:
+        // - Expand the box slightly in that direction
+        // - Verify that the box collides (with the wall)
+        
+        {  // MINXSTART
+            Vec3d pos = player.getPos();
+            pos = new Vec3d(pos.x - 0.01, pos.y, pos.z);  // Bug: this lets us start climbing on flat ground.
+            Box box = player.getDimensions(player.getPose()).getBoxAt(pos);
+            if (!client.world.isSpaceEmpty(box)) {
+                touching_MINXSTART = true;
+                retVal = true;
+            }
+        }
+        {  // MAXXSTART
+            Vec3d pos = player.getPos();
+            pos = new Vec3d(pos.x + 0.01, pos.y, pos.z);
+            Box box = player.getDimensions(player.getPose()).getBoxAt(pos);
+            if (!client.world.isSpaceEmpty(box)) {
+                touching_MAXXSTART = true;
+                retVal = true;
+            }
+        }
+        {  // MINZSTART
+            Vec3d pos = player.getPos();
+            pos = new Vec3d(pos.x, pos.y, pos.z - 0.01);
+            Box box = player.getDimensions(player.getPose()).getBoxAt(pos);
+            if (!client.world.isSpaceEmpty(box)) {
+                touching_MINZSTART = true;
+                retVal = true;
+            }
+        }
+        {  // MAXZSTART
+            Vec3d pos = player.getPos();
+            pos = new Vec3d(pos.x, pos.y, pos.z + 0.01);
+            Box box = player.getDimensions(player.getPose()).getBoxAt(pos);
+            if (!client.world.isSpaceEmpty(box)) {
+                touching_MAXZSTART = true;
+                
                 retVal = true;
             }
         }
