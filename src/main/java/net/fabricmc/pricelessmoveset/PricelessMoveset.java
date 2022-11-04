@@ -44,5 +44,11 @@ public class PricelessMoveset implements ModInitializer {
 			(server, player, handler, buf, responseSender) -> {
 				player.fallDistance = 0.0f;
 			});
+
+			ServerPlayNetworking.registerGlobalReceiver(
+			SpinAttack.SPIN_ATTACK_CHANNEL_ID,
+			(server, player, handler, buf, responseSender) -> {
+				SpinAttack.spinAttack(player);
+			});
 		}
 }

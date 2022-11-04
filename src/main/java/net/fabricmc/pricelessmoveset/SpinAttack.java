@@ -6,6 +6,8 @@ import org.lwjgl.glfw.GLFW;
 
 import net.minecraft.util.math.Box;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
+import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.option.KeyBinding;
@@ -26,16 +28,19 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.SwordItem;
 import net.minecraft.network.packet.s2c.play.EntityVelocityUpdateS2CPacket;
 import net.minecraft.particle.ParticleTypes;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.stat.Stats;
 import net.minecraft.util.Hand;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.explosion.Explosion;
 
 public class SpinAttack {
+    public static Identifier SPIN_ATTACK_CHANNEL_ID = new Identifier("pricelessmoveset:spin_attack_channel");
     public MinecraftClient client;
     public StaminaModel staminaModel;
     public KeyBinding spinAttackKeybind;
@@ -55,20 +60,26 @@ public class SpinAttack {
 
     public void tick() {
         // Did the user press the attack button?
-        if (!spinAttackKeybind.wasPressed()) return;  // Rising edge later?
+        if (!spinAttackKeybind.wasPressed()) return;  //TODO: Rising edge later
 
-        // TODO: send a packet to the server, and run the spin attack there.
+        // Check stamina, consume stamina.
 
+        // Send packet to server
+        ClientPlayNetworking.send(SPIN_ATTACK_CHANNEL_ID, PacketByteBufs.create());
+    }
+
+    // Server side code
+    public static void spinAttack(ServerPlayerEntity player) {
         // Spin attack each of the entities nearby
         double radius = 3.0;
-        Vec3d vec3d = client.player.getPos();
+        Vec3d vec3d = player.getPos();
         double minX = vec3d.x - radius;
         double maxX = vec3d.x + radius;
-        double minY = vec3d.y + (double)(client.player.getHeight() * 0.25);
-        double maxY = vec3d.y + (double)(client.player.getHeight() * 0.75);
+        double minY = vec3d.y + (double)(player.getHeight() * 0.25);
+        double maxY = vec3d.y + (double)(player.getHeight() * 0.75);
         double minZ = vec3d.z - radius;
         double maxZ = vec3d.z + radius;
-        List<Entity> list = client.player.world.getOtherEntities(client.player, new Box(minX, minY, minZ, maxX, maxY, maxZ));
+        List<Entity> list = player.world.getOtherEntities(player, new Box(minX, minY, minZ, maxX, maxY, maxZ));
         double squaredRadius = radius * radius;
         for (Entity entity : list) {
             // Skip entities out of radius.
@@ -84,50 +95,50 @@ public class SpinAttack {
             // Copy the conditions for a sweep attack.
             if (entity instanceof LivingEntity) {
                 LivingEntity livingEntity = (LivingEntity)(entity);
-                if (client.player.isTeammate(livingEntity)) continue;
+                if (player.isTeammate(livingEntity)) continue;
                 if (livingEntity instanceof ArmorStandEntity && ((ArmorStandEntity)livingEntity).isMarker()) continue;
             }
 
             // Attack the entity.
-            spinAttackOne(entity);
+            spinAttackOne(player, entity);
         }
 
-        client.player.addExhaustion(0.1f);
-        client.player.world.playSound(null, client.player.getX(), client.player.getY(), client.player.getZ(), SoundEvents.ENTITY_PLAYER_ATTACK_SWEEP, client.player.getSoundCategory(), 1.0f, 1.0f);
-        client.player.spawnSweepAttackParticles();
+        player.addExhaustion(0.1f);
+        player.world.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.ENTITY_PLAYER_ATTACK_SWEEP, player.getSoundCategory(), 1.0f, 1.0f);
+        player.spawnSweepAttackParticles();
     }
 
-    public void spinAttackOne(Entity target) {
+    public static void spinAttackOne(ServerPlayerEntity player, Entity target) {
         // Copied with modifications from PlayerEntity.attack.
         if (!target.isAttackable()) {
             return;
         }
-        if (target.handleAttack(client.player)) {
+        if (target.handleAttack(player)) {
             return;
         }
-        float f = 2.0f * (float)client.player.getAttributeValue(EntityAttributes.GENERIC_ATTACK_DAMAGE);
+        float f = 2.0f * (float)player.getAttributeValue(EntityAttributes.GENERIC_ATTACK_DAMAGE);
         float g = target instanceof LivingEntity ?
-            EnchantmentHelper.getAttackDamage(client.player.getMainHandStack(), ((LivingEntity)target).getGroup()) :
-            EnchantmentHelper.getAttackDamage(client.player.getMainHandStack(), EntityGroup.DEFAULT);
-        float h = client.player.getAttackCooldownProgress(0.5f);
+            EnchantmentHelper.getAttackDamage(player.getMainHandStack(), ((LivingEntity)target).getGroup()) :
+            EnchantmentHelper.getAttackDamage(player.getMainHandStack(), EntityGroup.DEFAULT);
+        float h = player.getAttackCooldownProgress(0.5f);
         g *= h;
-        client.player.resetLastAttackedTicks();
+        player.resetLastAttackedTicks();
         f *= 0.2f + h * h * 0.8f;
         if (f > 0.0f || g > 0.0f) {
             ItemStack itemStack;
             boolean bl = h > 0.9f;
             boolean bl2 = false;
             int i = 0;
-            i += EnchantmentHelper.getKnockback(client.player);
-            if (client.player.isSprinting() && bl) {
-                client.player.world.playSound(null, client.player.getX(), client.player.getY(), client.player.getZ(), SoundEvents.ENTITY_PLAYER_ATTACK_KNOCKBACK, client.player.getSoundCategory(), 1.0f, 1.0f);
+            i += EnchantmentHelper.getKnockback(player);
+            if (player.isSprinting() && bl) {
+                player.world.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.ENTITY_PLAYER_ATTACK_KNOCKBACK, player.getSoundCategory(), 1.0f, 1.0f);
                 ++i;
                 bl2 = true;
             }
             f += g;
             float j = 0.0f;
             boolean bl5 = false;
-            int k = EnchantmentHelper.getFireAspect(client.player);
+            int k = EnchantmentHelper.getFireAspect(player);
             if (target instanceof LivingEntity) {
                 j = ((LivingEntity)target).getHealth();
                 if (k > 0 && !target.isOnFire()) {
@@ -136,65 +147,65 @@ public class SpinAttack {
                 }
             }
             Vec3d vec3d = target.getVelocity();
-            boolean bl6 = target.damage(DamageSource.player(client.player), f);
+            boolean bl6 = target.damage(DamageSource.player(player), f);
             if (bl6) {
                 if (i > 0) {  // Apply knockback
                     if (target instanceof LivingEntity) {
-                        ((LivingEntity)target).takeKnockback((float)i * 0.5f, MathHelper.sin(client.player.getYaw() * ((float)Math.PI / 180)), -MathHelper.cos(client.player.getYaw() * ((float)Math.PI / 180)));
+                        ((LivingEntity)target).takeKnockback((float)i * 0.5f, MathHelper.sin(player.getYaw() * ((float)Math.PI / 180)), -MathHelper.cos(player.getYaw() * ((float)Math.PI / 180)));
                     } else {
-                        target.addVelocity(-MathHelper.sin(client.player.getYaw() * ((float)Math.PI / 180)) * (float)i * 0.5f, 0.1, MathHelper.cos(client.player.getYaw() * ((float)Math.PI / 180)) * (float)i * 0.5f);
+                        target.addVelocity(-MathHelper.sin(player.getYaw() * ((float)Math.PI / 180)) * (float)i * 0.5f, 0.1, MathHelper.cos(player.getYaw() * ((float)Math.PI / 180)) * (float)i * 0.5f);
                     }
-                    client.player.setVelocity(client.player.getVelocity().multiply(0.6, 1.0, 0.6));
-                    client.player.setSprinting(false);
+                    player.setVelocity(player.getVelocity().multiply(0.6, 1.0, 0.6));
+                    player.setSprinting(false);
                 }
                 // Sweep attack
                 if (target instanceof LivingEntity) {
                     LivingEntity livingEntity = (LivingEntity)(target);
                     livingEntity.takeKnockback(
                         0.4f,
-                        target.getPos().x - client.player.getPos().x,
-                        target.getPos().z - client.player.getPos().z);
+                        target.getPos().x - player.getPos().x,
+                        target.getPos().z - player.getPos().z);
                     livingEntity.damage(
-                        DamageSource.player(client.player),
-                        1.0f + EnchantmentHelper.getSweepingMultiplier(client.player) * f);
+                        DamageSource.player(player),
+                        1.0f + EnchantmentHelper.getSweepingMultiplier(player) * f);
                 }
                 if (target instanceof ServerPlayerEntity && target.velocityModified) {
                     ((ServerPlayerEntity)target).networkHandler.sendPacket(new EntityVelocityUpdateS2CPacket(target));
                     target.velocityModified = false;
                     target.setVelocity(vec3d);
                 }
-                client.player.world.playSound(
-                    null, client.player.getX(), client.player.getY(), client.player.getZ(),
+                player.world.playSound(
+                    null, player.getX(), player.getY(), player.getZ(),
                     bl ? SoundEvents.ENTITY_PLAYER_ATTACK_STRONG : SoundEvents.ENTITY_PLAYER_ATTACK_WEAK,
-                    client.player.getSoundCategory(), 1.0f, 1.0f);
+                    player.getSoundCategory(), 1.0f, 1.0f);
                 if (g > 0.0f) {
-                    client.player.addEnchantedHitParticles(target);
+                    player.addEnchantedHitParticles(target);
                 }
-                client.player.onAttacking(target);
+                player.onAttacking(target);
                 if (target instanceof LivingEntity) {
-                    EnchantmentHelper.onUserDamaged((LivingEntity)target, client.player);
+                    EnchantmentHelper.onUserDamaged((LivingEntity)target, player);
                 }
-                EnchantmentHelper.onTargetDamaged(client.player, target);
-                ItemStack itemStack2 = client.player.getMainHandStack();
+                EnchantmentHelper.onTargetDamaged(player, target);
+                ItemStack itemStack2 = player.getMainHandStack();
                 Entity entity = target;
                 if (target instanceof EnderDragonPart) {
                     entity = ((EnderDragonPart)target).owner;
                 }
-                if (!client.player.world.isClient && !itemStack2.isEmpty() && entity instanceof LivingEntity) {
-                    itemStack2.postHit((LivingEntity)entity, client.player);
+                if (!player.world.isClient && !itemStack2.isEmpty() && entity instanceof LivingEntity) {
+                    itemStack2.postHit((LivingEntity)entity, player);
                     if (itemStack2.isEmpty()) {
-                        client.player.setStackInHand(Hand.MAIN_HAND, ItemStack.EMPTY);
+                        player.setStackInHand(Hand.MAIN_HAND, ItemStack.EMPTY);
                     }
                 }
                 if (target instanceof LivingEntity) {
                     float m = j - ((LivingEntity)target).getHealth();
-                    client.player.increaseStat(Stats.DAMAGE_DEALT, Math.round(m * 10.0f));
+                    player.increaseStat(Stats.DAMAGE_DEALT, Math.round(m * 10.0f));
                     if (k > 0) {
                         target.setOnFireFor(k * 4);
                     }
-                    if (client.player.world instanceof ServerWorld && m > 2.0f) {
+                    if (player.world instanceof ServerWorld && m > 2.0f) {
                         int n = (int)((double)m * 0.5);
-                        ((ServerWorld)client.player.world).spawnParticles(ParticleTypes.DAMAGE_INDICATOR, target.getX(), target.getBodyY(0.5), target.getZ(), n, 0.1, 0.0, 0.1, 0.2);
+                        ((ServerWorld)player.world).spawnParticles(ParticleTypes.DAMAGE_INDICATOR, target.getX(), target.getBodyY(0.5), target.getZ(), n, 0.1, 0.0, 0.1, 0.2);
                     }
                 }
             }
