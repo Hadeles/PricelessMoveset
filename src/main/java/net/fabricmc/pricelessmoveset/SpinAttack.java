@@ -162,9 +162,9 @@ public class SpinAttack {
                 if (target instanceof LivingEntity) {
                     LivingEntity livingEntity = (LivingEntity)(target);
                     livingEntity.takeKnockback(
-                        0.4f,
-                        target.getPos().x - player.getPos().x,
-                        target.getPos().z - player.getPos().z);
+                        0.2f,
+                        player.getPos().x - target.getPos().x,
+                        player.getPos().z - target.getPos().z);
                     livingEntity.damage(
                         DamageSource.player(player),
                         1.0f + EnchantmentHelper.getSweepingMultiplier(player) * f);
