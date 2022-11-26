@@ -7,20 +7,15 @@ import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.minecraft.client.network.ClientPlayerEntity;
 
 public class PricelessMovesetClient implements ClientModInitializer {
-	public static long DODGE_COOLDOWN_TIME = 50;
-	public static long SPIN_ATTACK_COOLDOWN_TIME = 300;
-
 	public static StaminaModel staminaModel = new StaminaModel();
 	public static StaminaView staminaView = new StaminaView(staminaModel);
-	public static CooldownModel dodgeCooldownModel = new CooldownModel(DODGE_COOLDOWN_TIME);
-	public static Dodge dodge = new Dodge(staminaModel, dodgeCooldownModel);
+	public static Dodge dodge = new Dodge(staminaModel);
 	public static LedgeGrab ledgeGrab = new LedgeGrab(staminaModel);
 	public static Pogo pogo = new Pogo(staminaModel);
 	public static AutoSwing autoSwing = new AutoSwing();
 	public static Climb climb = new Climb(staminaModel);
-	public static CooldownModel spinAttackCooldownModel = new CooldownModel(SPIN_ATTACK_COOLDOWN_TIME);
-	public static SpinAttack spinAttack = new SpinAttack(staminaModel, spinAttackCooldownModel);
-	public static CooldownView cooldownView = new CooldownView(dodgeCooldownModel, spinAttackCooldownModel);
+	public static SpinAttack spinAttack = new SpinAttack(staminaModel);
+	public static CooldownView cooldownView = new CooldownView(dodge, spinAttack);
 	// public static AutoSwim autoSwim = new AutoSwim();
 
 	@Override

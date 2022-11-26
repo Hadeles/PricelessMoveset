@@ -20,6 +20,9 @@ import net.minecraft.client.util.InputUtil;
 
 public class Dodge {
     public static Identifier DODGE_CHANNEL_ID = new Identifier("pricelessmoveset:dodge_channel");
+
+    // Allow other classes to change the cooldown. Dodge.Dodge_COOLDOWN_TIME
+    public static long DODGE_COOLDOWN_TIME = 50;
     public static long DODGE_INVULNERABILITY_TIME = 10;
     public static long DODGE_NO_DRAG_TIME = 1;
     public static int DODGE_STAMINA_COST = 25;
@@ -28,15 +31,11 @@ public class Dodge {
     public boolean hasNoDrag = false;
     public boolean hasInvulnerability = false;
     public StaminaModel staminaModel;
-    public CooldownModel cooldownModel;
     KeyBinding dodgeKeybind;
     public boolean keybindIsPressedPreviousTick = false;
 
-    Dodge(
-            StaminaModel staminaModel,
-            CooldownModel cooldownModel) {
+    Dodge(StaminaModel staminaModel) {
         this.staminaModel = staminaModel;
-        this.cooldownModel = cooldownModel;
 
         dodgeKeybind = new KeyBinding(
             "key.pricelessmoveset.dodge_keybind",
@@ -152,14 +151,14 @@ public class Dodge {
         ClientPlayerEntity entity = getEntity();
 
         // Check the cooldown first
-        if (!cooldownModel.canUse()) return;
+        long time = entity.getEntityWorld().getTime();
+        if (time <= lastDodgeUseTime + DODGE_COOLDOWN_TIME) return;
 
         // Have we got enough stamina?
         if (staminaModel.stamina < DODGE_STAMINA_COST) return;
 
         // OK, do a dodge.
-        cooldownModel.use();
-        lastDodgeUseTime = client.player.getEntityWorld().getTime();
+        lastDodgeUseTime = time;
         staminaModel.stamina -= DODGE_STAMINA_COST;
 
         entity.setNoDrag(true);
@@ -202,5 +201,13 @@ public class Dodge {
         entity.addVelocity(
                 -Math.sin(yaw) * dodgeSpeedResult, ySpeed, Math.cos(yaw) * dodgeSpeedResult);
                 entity.addExhaustion(1.0f);
+    }
+
+    public float getFill() {
+        long time = getEntity().getEntityWorld().getTime();
+        float fill = 1.0f - (float)(time - lastDodgeUseTime) / (float)(DODGE_COOLDOWN_TIME);
+        if (fill < 0.0f) fill = 0.0f;
+        if (fill > 1.0f) fill = 1.0f;
+        return fill;
     }
 }

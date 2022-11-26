@@ -13,17 +13,17 @@ public class CooldownView
 extends DrawableHelper
 implements HudRenderCallback {
     public static Identifier barTexture = new Identifier("pricelessmoveset", "textures/gui/stamina_bar.png");
-	public CooldownModel dodgeCooldownModel;
-	public CooldownModel spinAttackCooldownModel;
+	public Dodge dodge;
+	public SpinAttack spinAttack;
 
 	public StaminaModel staminaModel;
 
 	public CooldownView(
-		CooldownModel dodgeCooldownModel,
-		CooldownModel spinAttackCooldownModel) {
+		Dodge dodge,
+		SpinAttack spinAttack) {
 		// Scott hates this
-		this.dodgeCooldownModel = dodgeCooldownModel;
-		this.spinAttackCooldownModel = spinAttackCooldownModel;
+		this.dodge = dodge;
+		this.spinAttack = spinAttack;
 	}
 
 	@Override
@@ -49,7 +49,7 @@ implements HudRenderCallback {
 		{
 			int u = 0;
 			int v = 50;
-			int w = (int)(getDodgeFill() * barWidth);
+			int w = (int)(dodge.getFill() * barWidth);
 			drawTexture(matrixStack, x, y, u, v, w, barHeight, textureWidth, textureHeight);
 		}
 
@@ -57,16 +57,8 @@ implements HudRenderCallback {
 		{
 			int u = 0;
 			int v = 45;
-			int w = (int)(getSpinAttackFill() * barWidth);
+			int w = (int)(spinAttack.getFill() * barWidth);
 			drawTexture(matrixStack, x, y, u, v, w, barHeight, textureWidth, textureHeight);
 		}
-	}
-
-	public float getDodgeFill() {
-		return dodgeCooldownModel.getFill();
-	}
-
-	public float getSpinAttackFill() {
-		return spinAttackCooldownModel.getFill();
 	}
 }
