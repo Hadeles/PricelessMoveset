@@ -23,7 +23,7 @@ public class CooldownModel {
     }
 
     public float getFill() {
-        float fill = (float)(getTime() - lastUseTime) / (float)(cooldownTime);
+        float fill = 1.0f - (float)(getTime() - lastUseTime) / (float)(cooldownTime);
         if (fill < 0.0f) fill = 0.0f;
         if (fill > 1.0f) fill = 1.0f;
         return fill;

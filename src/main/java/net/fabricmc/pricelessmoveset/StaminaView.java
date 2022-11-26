@@ -31,7 +31,7 @@ implements HudRenderCallback {
 		// But the bar fullness, drawn on top, is 79 x 7.
 		int barWidth = 81;
 		int barHeight = 9;
-		int textureWidth = 131;
+		int textureWidth = 203;
 		int textureHeight = 81;
 		int x = client.getWindow().getScaledWidth() / 2 - barWidth - 10;  // Aligned with the armor bar
 		int y = client.getWindow().getScaledHeight() - 49;  // Just above the armor bar
