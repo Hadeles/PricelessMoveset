@@ -136,6 +136,7 @@ public class Dodge {
 
         // Rising edge detection
         boolean shouldDodge = !keybindIsPressedPreviousTick && (dodgeKeybind.isPressed() || dodgeKeybind.wasPressed());
+        while (dodgeKeybind.wasPressed());  // Consume the counter
         keybindIsPressedPreviousTick = dodgeKeybind.isPressed();
         if (!shouldDodge) return;
 
