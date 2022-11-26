@@ -41,17 +41,19 @@ import net.minecraft.world.explosion.Explosion;
 
 public class SpinAttack {
     public static Identifier SPIN_ATTACK_CHANNEL_ID = new Identifier("pricelessmoveset:spin_attack_channel");
-    public static long SPIN_ATTACK_COOLDOWN_TIME = 300;
     public static int SPIN_ATTACK_STAMINA_COST = 65;
     public MinecraftClient client;
     public StaminaModel staminaModel;
+    public CooldownModel cooldownModel;
     public KeyBinding spinAttackKeybind;
     public boolean keybindIsPressedPreviousTick = false;
-    public long lastSpinAttackUseTime = 0L;
 
-    SpinAttack(StaminaModel staminaModel) {
+    SpinAttack(
+            StaminaModel staminaModel,
+            CooldownModel cooldownModel) {
         client = MinecraftClient.getInstance();
         this.staminaModel = staminaModel;
+        this.cooldownModel = cooldownModel;
 
         spinAttackKeybind = new KeyBinding(
             "key.pricelessmoveset.spinAttack_keybind",
@@ -69,18 +71,14 @@ public class SpinAttack {
         if (!shouldSpinAttack) return;
 
         // Check the cooldown first
-        MinecraftClient client = MinecraftClient.getInstance();
-        long time = client.player.getEntityWorld().getTime();
-        if (time <= lastSpinAttackUseTime + SPIN_ATTACK_COOLDOWN_TIME) return;
+        if (!cooldownModel.canUse()) return;
 
         // Check stamina.
         if (staminaModel.stamina < SPIN_ATTACK_STAMINA_COST) return;
 
-        //change stamina.
-        staminaModel.stamina -= SPIN_ATTACK_STAMINA_COST;
-
         // Actually spin attack
-        lastSpinAttackUseTime = time;
+        staminaModel.stamina -= SPIN_ATTACK_STAMINA_COST;
+        cooldownModel.use();
         ClientPlayNetworking.send(SPIN_ATTACK_CHANNEL_ID, PacketByteBufs.create());
     }
 
