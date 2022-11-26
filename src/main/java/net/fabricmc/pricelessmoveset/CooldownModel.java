@@ -21,4 +21,11 @@ public class CooldownModel {
     public long getTime() {
        return MinecraftClient.getInstance().player.getEntityWorld().getTime();
     }
+
+    public float getFill() {
+        float fill = (float)(getTime() - lastUseTime) / (float)(cooldownTime);
+        if (fill < 0.0f) fill = 0.0f;
+        if (fill > 1.0f) fill = 1.0f;
+        return fill;
+    }
 }

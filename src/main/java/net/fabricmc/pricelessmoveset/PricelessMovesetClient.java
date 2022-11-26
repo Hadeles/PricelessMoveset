@@ -20,6 +20,7 @@ public class PricelessMovesetClient implements ClientModInitializer {
 	public static Climb climb = new Climb(staminaModel);
 	public static CooldownModel spinAttackCooldownModel = new CooldownModel(SPIN_ATTACK_COOLDOWN_TIME);
 	public static SpinAttack spinAttack = new SpinAttack(staminaModel, spinAttackCooldownModel);
+	public static CooldownView cooldownView = new CooldownView(dodgeCooldownModel, spinAttackCooldownModel);
 	// public static AutoSwim autoSwim = new AutoSwim();
 
 	@Override
@@ -29,6 +30,7 @@ public class PricelessMovesetClient implements ClientModInitializer {
 		// Proceed with mild caution.
 
 		HudRenderCallback.EVENT.register(staminaView);
+		HudRenderCallback.EVENT.register(cooldownView);
 
 		ClientTickEvents.END_CLIENT_TICK.register(client -> {
 			// Don't run until there is an entity. There lies madness!
