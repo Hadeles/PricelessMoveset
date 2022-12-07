@@ -16,8 +16,6 @@ implements HudRenderCallback {
 	public Dodge dodge;
 	public SpinAttack spinAttack;
 
-	public StaminaModel staminaModel;
-
 	public CooldownView(
 		Dodge dodge,
 		SpinAttack spinAttack) {

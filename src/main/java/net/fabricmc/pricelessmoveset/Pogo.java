@@ -10,15 +10,9 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
 
 public class Pogo {
-    public static int STAMINA_COST = 15;
     public static float POGO_VELOCITY = 0.5f;
     public static Identifier POGO_CHANNEL_ID = new Identifier("pricelessmoveset:pogo_channel");
     public static HashMap<Integer, Boolean> playerToChargedAttack = new HashMap<Integer, Boolean>();
-    public StaminaModel staminaModel;
-
-    Pogo(StaminaModel staminaModel) {
-        this.staminaModel = staminaModel;
-    }
 
     public static void setChargedAttack(ServerPlayerEntity player, boolean chargedAttack) {
         playerToChargedAttack.put((Integer)(player.getId()), (Boolean)(chargedAttack));
@@ -52,9 +46,6 @@ public class Pogo {
 
     // Client side only
     public void tryPogo(ClientPlayerEntity player) {
-        // Do we have enough stamina?
-        if (staminaModel.stamina < STAMINA_COST) return;
-        staminaModel.stamina -= STAMINA_COST;
 
         // Do a pogo
         player.addVelocity(0.0f, POGO_VELOCITY, 0.0f);

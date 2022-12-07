@@ -7,14 +7,13 @@ import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.minecraft.client.network.ClientPlayerEntity;
 
 public class PricelessMovesetClient implements ClientModInitializer {
-	public static StaminaModel staminaModel = new StaminaModel();
-	public static StaminaView staminaView = new StaminaView(staminaModel);
-	public static Dodge dodge = new Dodge(staminaModel);
-	public static LedgeGrab ledgeGrab = new LedgeGrab(staminaModel);
-	public static Pogo pogo = new Pogo(staminaModel);
+
+	public static Dodge dodge = new Dodge();
+	public static LedgeGrab ledgeGrab = new LedgeGrab();
+	public static Pogo pogo = new Pogo();
 	public static AutoSwing autoSwing = new AutoSwing();
-	public static Climb climb = new Climb(staminaModel);
-	public static SpinAttack spinAttack = new SpinAttack(staminaModel);
+	// public static Climb climb = new Climb();
+	public static SpinAttack spinAttack = new SpinAttack();
 	public static CooldownView cooldownView = new CooldownView(dodge, spinAttack);
 	// public static AutoSwim autoSwim = new AutoSwim();
 
@@ -24,20 +23,16 @@ public class PricelessMovesetClient implements ClientModInitializer {
 		// However, some things (like resources) may still be uninitialized.
 		// Proceed with mild caution.
 
-		HudRenderCallback.EVENT.register(staminaView);
-		HudRenderCallback.EVENT.register(cooldownView);
-
 		ClientTickEvents.END_CLIENT_TICK.register(client -> {
 			// Don't run until there is an entity. There lies madness!
 			ClientPlayerEntity entity = client.player;
 			if (entity == null) return;
 
-			staminaModel.tick();
 			dodge.tick();
 			ledgeGrab.tick();
 			dodge.tick();
 			autoSwing.tick();
-			climb.tick();
+			// climb.tick();
 			spinAttack.tick();
 			// autoSwim.tick();
 		});

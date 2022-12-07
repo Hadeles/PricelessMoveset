@@ -29,11 +29,9 @@ public class Climb {
     public boolean touching_MINZSTART = false;
     public boolean touching_MAXZSTART = false;
 
-    public StaminaModel staminaModel;
     public KeyBinding climbKeybind;
 
-    public Climb(StaminaModel staminaModel) {
-        this.staminaModel = staminaModel;
+    public Climb() {
         climbKeybind = new KeyBinding(
             "key.pricelessmoveset.climb_keybind",
             InputUtil.Type.KEYSYM,
@@ -74,18 +72,11 @@ public class Climb {
             resetFallDistance();
         }
 
-        // Pause stamina regen while climbing.
-        if (climbing && (staminaModel.staminaPauseTicks <= 1)) { // sus
-            staminaModel.staminaPauseTicks += 1;
-        }
 
         // No sprint climbing
         if (climbing) {
             client.player.setSprinting(false);
         }
-
-        // Fall down if out of stamina.
-        if (climbing && staminaModel.stamina <= 0) climbing = false;
 
         if (climbing) {
             // Handle WASD keys.
@@ -95,9 +86,8 @@ public class Climb {
             boolean backKeyPressed = gameOptions.backKey.isPressed();
             boolean rightKeyPressed = gameOptions.rightKey.isPressed();
 
-            // Climbing uses stamina and hunger.
+            // Climbing uses hunger.
             if (climbing && (forwardKeyPressed || leftKeyPressed || backKeyPressed || rightKeyPressed)) {
-                staminaModel.stamina -=1;
                 client.player.addExhaustion(0.02f);
             }
     

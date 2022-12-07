@@ -25,17 +25,15 @@ public class Dodge {
     public static long DODGE_COOLDOWN_TIME = 50;
     public static long DODGE_INVULNERABILITY_TIME = 10;
     public static long DODGE_NO_DRAG_TIME = 1;
-    public static int DODGE_STAMINA_COST = 25;
     public static double SPEED = 0.5;
     public long lastDodgeUseTime = 0L;
     public boolean hasNoDrag = false;
     public boolean hasInvulnerability = false;
-    public StaminaModel staminaModel;
     KeyBinding dodgeKeybind;
     public boolean keybindIsPressedPreviousTick = false;
 
-    Dodge(StaminaModel staminaModel) {
-        this.staminaModel = staminaModel;
+    Dodge() {
+        
 
         dodgeKeybind = new KeyBinding(
             "key.pricelessmoveset.dodge_keybind",
@@ -154,12 +152,8 @@ public class Dodge {
         long time = entity.getEntityWorld().getTime();
         if (time <= lastDodgeUseTime + DODGE_COOLDOWN_TIME) return;
 
-        // Have we got enough stamina?
-        if (staminaModel.stamina < DODGE_STAMINA_COST) return;
-
         // OK, do a dodge.
         lastDodgeUseTime = time;
-        staminaModel.stamina -= DODGE_STAMINA_COST;
 
         entity.setNoDrag(true);
         hasNoDrag = true;

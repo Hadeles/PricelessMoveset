@@ -12,15 +12,6 @@ import net.minecraft.world.World;
 
 public class LedgeGrab {
     public boolean wasJumpKeyPressed = false;
-    public int LEDGE_GRAB_STAMINA_COST = 25;
-    public StaminaModel staminaModel;
-
-    
-    LedgeGrab(StaminaModel staminaModel) {
-        this.staminaModel = staminaModel;
-    }
-
-    public LedgeGrab() {}
 
     public void tick() {        
         MinecraftClient client = MinecraftClient.getInstance();
@@ -39,12 +30,6 @@ public class LedgeGrab {
 
         // Is the player next to a ledge.
         if (!isNearLedge(player.getBlockPos())) return;
-
-        // Have we got enough stamina?
-        if (staminaModel.stamina < LEDGE_GRAB_STAMINA_COST) return;
-
-        // OK, ledge grab.
-        staminaModel.stamina -= LEDGE_GRAB_STAMINA_COST;
 
         // Do a jump.
         player.setVelocity(player.getVelocity().x, 0.4f, player.getVelocity().z);
