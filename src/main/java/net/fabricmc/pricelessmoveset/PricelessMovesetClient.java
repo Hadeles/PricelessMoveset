@@ -9,7 +9,7 @@ import net.minecraft.client.network.ClientPlayerEntity;
 public class PricelessMovesetClient implements ClientModInitializer {
 
 	public static Dodge dodge = new Dodge();
-	public static LedgeGrab ledgeGrab = new LedgeGrab();
+	// public static LedgeGrab ledgeGrab = new LedgeGrab();
 	public static Pogo pogo = new Pogo();
 	public static AutoSwing autoSwing = new AutoSwing();
 	// public static Climb climb = new Climb();
@@ -29,7 +29,7 @@ public class PricelessMovesetClient implements ClientModInitializer {
 			if (entity == null) return;
 
 			dodge.tick();
-			ledgeGrab.tick();
+			// ledgeGrab.tick();
 			dodge.tick();
 			autoSwing.tick();
 			// climb.tick();
