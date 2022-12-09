@@ -4,40 +4,33 @@ import java.util.List;
 
 import org.lwjgl.glfw.GLFW;
 
-import net.minecraft.util.math.Box;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.enchantment.EnchantmentHelper;
-import net.minecraft.enchantment.ProtectionEnchantment;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityGroup;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.TntEntity;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.boss.dragon.EnderDragonPart;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.decoration.ArmorStandEntity;
-import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.SwordItem;
 import net.minecraft.network.packet.s2c.play.EntityVelocityUpdateS2CPacket;
 import net.minecraft.particle.ParticleTypes;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.stat.Stats;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.Box;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.explosion.Explosion;
 
 public class SpinAttack {
     public static Identifier SPIN_ATTACK_CHANNEL_ID = new Identifier("pricelessmoveset:spin_attack_channel");
@@ -112,8 +105,22 @@ public class SpinAttack {
 
         player.addExhaustion(0.1f);
         player.world.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.ENTITY_PLAYER_ATTACK_SWEEP, player.getSoundCategory(), 1.0f, 1.0f);
-        player.spawnSweepAttackParticles();
+        spawnSpinAttackParticles(player);
     }
+
+    public static void spawnSpinAttackParticles(ServerPlayerEntity player) {
+        double d = -MathHelper.sin(player.getYaw() * ((float)Math.PI / 180));
+        double e = MathHelper.cos(player.getYaw() * ((float)Math.PI / 180));
+        if (player.world instanceof ServerWorld) {
+            ((ServerWorld)player.world).spawnParticles(
+                PricelessMovesetClient.SPIN_ATTACK_PARTICLE,
+                player.getX() + d,
+                player.getBodyY(0.5),
+                player.getZ() + e,
+                0, d, 0.0, e, 0.0);
+        }
+    }
+
 
     public static void spinAttackOne(ServerPlayerEntity player, Entity target) {
         // Copied with modifications from PlayerEntity.attack.
