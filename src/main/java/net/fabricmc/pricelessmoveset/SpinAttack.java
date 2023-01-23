@@ -34,7 +34,7 @@ import net.minecraft.util.math.Vec3d;
 
 public class SpinAttack {
     public static Identifier SPIN_ATTACK_CHANNEL_ID = new Identifier("pricelessmoveset:spin_attack_channel");
-    public static long SPIN_ATTACK_COOLDOWN_TIME = 300;
+    public static long SPIN_ATTACK_COOLDOWN_TIME = 30;
     public MinecraftClient client;
     public KeyBinding spinAttackKeybind;
     public boolean keybindIsPressedPreviousTick = false;
@@ -114,9 +114,9 @@ public class SpinAttack {
         if (player.world instanceof ServerWorld) {
             ((ServerWorld)player.world).spawnParticles(
                 PricelessMovesetClient.SPIN_ATTACK_PARTICLE,
-                player.getX() + d,
+                player.getX(),
                 player.getBodyY(0.5),
-                player.getZ() + e,
+                player.getZ(),
                 0, d, 0.0, e, 0.0);
         }
     }
