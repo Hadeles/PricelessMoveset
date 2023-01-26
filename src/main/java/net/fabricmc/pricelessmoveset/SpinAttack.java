@@ -117,7 +117,7 @@ public class SpinAttack {
                 player.getX(),
                 player.getBodyY(0.5),
                 player.getZ(),
-                0, d, 0.0, e, 0.0);
+                0, 0.0, 0.0, 0.0, 0.0);
         }
     }
 
