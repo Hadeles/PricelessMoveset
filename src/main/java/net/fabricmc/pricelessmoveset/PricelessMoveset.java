@@ -7,6 +7,7 @@ import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.client.option.KeyBinding;
+import net.minecraft.entity.Entity;
 
 public class PricelessMoveset implements ModInitializer {
 
@@ -37,6 +38,14 @@ public class PricelessMoveset implements ModInitializer {
 				(server, player, handler, buf, responseSender) -> {
 					boolean invulnerable = buf.readBoolean();
 					player.setInvulnerable(invulnerable);
+				});
+
+		ServerPlayNetworking.registerGlobalReceiver(
+				Pull.PULL_CHANNEL_ID,
+				(server, player, handler, buf, responseSender) -> {
+					int targetId = buf.readInt();
+					Entity target = player.world.getEntityById(targetId);
+					Pull.pullTowards(player, target);
 				});
 
 		ServerPlayNetworking.registerGlobalReceiver(

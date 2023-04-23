@@ -12,6 +12,7 @@ import net.minecraft.util.registry.Registry;
 public class PricelessMovesetClient implements ClientModInitializer {
 
 	public static Dodge dodge = new Dodge();
+	public static Pull pull = new Pull();
 	// public static LedgeGrab ledgeGrab = new LedgeGrab();
 	public static Pogo pogo = new Pogo();
 	public static AutoSwing autoSwing = new AutoSwing();
@@ -42,6 +43,7 @@ public class PricelessMovesetClient implements ClientModInitializer {
 				return;
 
 			dodge.tick();
+			pull.tick();
 			// ledgeGrab.tick();
 			autoSwing.tick();
 			// climb.tick();
