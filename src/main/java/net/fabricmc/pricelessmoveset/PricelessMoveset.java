@@ -9,15 +9,15 @@ import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.client.option.KeyBinding;
 
 public class PricelessMoveset implements ModInitializer {
-	
+
 	// This logger is used to write text to the console and the log file.
 	// It is considered best practice to use your mod id as the logger's name.
 	// That way, it's clear which mod wrote info, warnings, and errors.
-    public static final String MODID = "pricelessmoveset";
+	public static final String MODID = "pricelessmoveset";
 	public static String VERSION = "";
 	public static int[] SEMVER;
 	public static final Logger LOGGER = LoggerFactory.getLogger("pricelessmoveset");
-    
+
 	public static KeyBinding dodgeKeybind;
 
 	@Override
@@ -33,22 +33,22 @@ public class PricelessMoveset implements ModInitializer {
 		});
 
 		ServerPlayNetworking.registerGlobalReceiver(
-			Dodge.DODGE_CHANNEL_ID,
-			(server, player, handler, buf, responseSender) -> {
-				boolean invulnerable = buf.readBoolean();
-				player.setInvulnerable(invulnerable);
-			});
+				Dodge.DODGE_CHANNEL_ID,
+				(server, player, handler, buf, responseSender) -> {
+					boolean invulnerable = buf.readBoolean();
+					player.setInvulnerable(invulnerable);
+				});
 
 		ServerPlayNetworking.registerGlobalReceiver(
-			Climb.CLIMB_CHANNEL_ID,
-			(server, player, handler, buf, responseSender) -> {
-				player.fallDistance = 0.0f;
-			});
+				Climb.CLIMB_CHANNEL_ID,
+				(server, player, handler, buf, responseSender) -> {
+					player.fallDistance = 0.0f;
+				});
 
-			ServerPlayNetworking.registerGlobalReceiver(
-			SpinAttack.SPIN_ATTACK_CHANNEL_ID,
-			(server, player, handler, buf, responseSender) -> {
-				SpinAttack.spinAttack(player);
-			});
-		}
+		ServerPlayNetworking.registerGlobalReceiver(
+				SpinAttack.SPIN_ATTACK_CHANNEL_ID,
+				(server, player, handler, buf, responseSender) -> {
+					SpinAttack.spinAttack(player);
+				});
+	}
 }

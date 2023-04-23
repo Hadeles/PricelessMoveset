@@ -21,7 +21,7 @@ public class SpinAttackParticle extends SpriteBillboardParticle {
         this.red = f = this.random.nextFloat() * 0.6f + 0.4f;
         this.green = f;
         this.blue = f;
-        this.scale = 1.0f - (float)d * 0.5f;
+        this.scale = 1.0f - (float) d * 0.5f;
         this.setSpriteForAge(spriteProvider);
     }
 
@@ -47,9 +47,9 @@ public class SpinAttackParticle extends SpriteBillboardParticle {
         return ParticleTextureSheet.PARTICLE_SHEET_LIT;
     }
 
-    @Environment(value=EnvType.CLIENT)
+    @Environment(value = EnvType.CLIENT)
     public static class Factory
-    implements ParticleFactory<DefaultParticleType> {
+            implements ParticleFactory<DefaultParticleType> {
         private final SpriteProvider spriteProvider;
 
         public Factory(SpriteProvider spriteProvider) {
@@ -57,7 +57,8 @@ public class SpinAttackParticle extends SpriteBillboardParticle {
         }
 
         @Override
-        public Particle createParticle(DefaultParticleType defaultParticleType, ClientWorld clientWorld, double d, double e, double f, double g, double h, double i) {
+        public Particle createParticle(DefaultParticleType defaultParticleType, ClientWorld clientWorld, double d,
+                double e, double f, double g, double h, double i) {
             return new SpinAttackParticle(clientWorld, d, e, f, g, this.spriteProvider);
         }
     }

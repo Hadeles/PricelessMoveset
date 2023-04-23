@@ -15,11 +15,11 @@ public class Pogo {
     public static HashMap<Integer, Boolean> playerToChargedAttack = new HashMap<Integer, Boolean>();
 
     public static void setChargedAttack(ServerPlayerEntity player, boolean chargedAttack) {
-        playerToChargedAttack.put((Integer)(player.getId()), (Boolean)(chargedAttack));
+        playerToChargedAttack.put((Integer) (player.getId()), (Boolean) (chargedAttack));
     }
 
     public static boolean getChargedAttack(ServerPlayerEntity player) {
-        Boolean result = playerToChargedAttack.get((Integer)(player.getId()));
+        Boolean result = playerToChargedAttack.get((Integer) (player.getId()));
         return result == null ? false : result.booleanValue();
     }
 
@@ -28,14 +28,17 @@ public class Pogo {
         // Was this a fully charged attack?
         boolean chargedAttack = getChargedAttack(player);
         setChargedAttack(player, player.getAttackCooldownProgress(0.5f) >= 1.0f);
-        if (!chargedAttack) return;
+        if (!chargedAttack)
+            return;
 
         // Are we attacking something?
         LivingEntity attacking = player.getAttacking();
-        if (attacking == null) return;
+        if (attacking == null)
+            return;
 
         // Did we *just* attack it this frame?
-        if (player.getLastAttackTime() != player.age - 1) return;
+        if (player.getLastAttackTime() != player.age - 1)
+            return;
 
         // Are we above the "attacking"?
         if (player.getPos().y > attacking.getPos().y + attacking.getHeight() - 0.5f) {

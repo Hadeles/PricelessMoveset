@@ -33,13 +33,12 @@ public class Dodge {
     public boolean keybindIsPressedPreviousTick = false;
 
     Dodge() {
-        
 
         dodgeKeybind = new KeyBinding(
-            "key.pricelessmoveset.dodge_keybind",
-            InputUtil.Type.KEYSYM,
-            GLFW.GLFW_KEY_R,
-            "category." + PricelessMoveset.MODID);
+                "key.pricelessmoveset.dodge_keybind",
+                InputUtil.Type.KEYSYM,
+                GLFW.GLFW_KEY_R,
+                "category." + PricelessMoveset.MODID);
         KeyBindingHelper.registerKeyBinding(dodgeKeybind);
     }
 
@@ -51,10 +50,12 @@ public class Dodge {
         long time = getEntity().getEntityWorld().getTime();
 
         // Bail out if there is nothing to do.
-        if (!hasNoDrag) return;
+        if (!hasNoDrag)
+            return;
 
         // Bail out if it's too early.
-        if (time <= lastDodgeUseTime + DODGE_NO_DRAG_TIME) return;
+        if (time <= lastDodgeUseTime + DODGE_NO_DRAG_TIME)
+            return;
 
         // Remove noDrag state.
         getEntity().setNoDrag(false);
@@ -64,15 +65,17 @@ public class Dodge {
     public void invulnerabilityTick() {
         long time = getEntity().getEntityWorld().getTime();
 
-        // Bail out if there is nothing to do.        
-        if (!hasInvulnerability) return;
+        // Bail out if there is nothing to do.
+        if (!hasInvulnerability)
+            return;
 
         // Cancel out tick cramming for this entity.
         // If only we could change isPushable! oh well.
         antiTickCramming();
 
         // Bail out if it's too early.
-        if (time <= lastDodgeUseTime + DODGE_INVULNERABILITY_TIME) return;
+        if (time <= lastDodgeUseTime + DODGE_INVULNERABILITY_TIME)
+            return;
 
         // Remove invulerable state.
         setInvulnerableDodge(false);
@@ -89,7 +92,8 @@ public class Dodge {
     // LivingEntity::tickCramming, but pullTowards instead of pushAway.
     public void antiTickCramming() {
         ClientPlayerEntity entity = getEntity();
-        List<Entity> list = entity.world.getOtherEntities(entity, entity.getBoundingBox(), EntityPredicates.canBePushedBy(entity));
+        List<Entity> list = entity.world.getOtherEntities(entity, entity.getBoundingBox(),
+                EntityPredicates.canBePushedBy(entity));
         for (int j = 0; j < list.size(); ++j) {
             Entity entity2 = list.get(j);
             pullTowards(entity, entity2);
@@ -107,7 +111,7 @@ public class Dodge {
         }
         double d = entity2.getX() - entity1.getX();
         double f = MathHelper.absMax(d, e = entity2.getZ() - entity1.getZ());
-        if (f >= (double)0.01f) {
+        if (f >= (double) 0.01f) {
             f = Math.sqrt(f);
             d /= f;
             e /= f;
@@ -117,8 +121,8 @@ public class Dodge {
             }
             d *= g;
             e *= g;
-            d *= (double)0.05f;
-            e *= (double)0.05f;
+            d *= (double) 0.05f;
+            e *= (double) 0.05f;
             if (!entity1.hasPassengers() && entity1.isPushable()) {
                 entity1.addVelocity(d, 0.0, e);
             }
@@ -134,9 +138,11 @@ public class Dodge {
 
         // Rising edge detection
         boolean shouldDodge = !keybindIsPressedPreviousTick && (dodgeKeybind.isPressed() || dodgeKeybind.wasPressed());
-        while (dodgeKeybind.wasPressed());  // Consume the counter
+        while (dodgeKeybind.wasPressed())
+            ; // Consume the counter
         keybindIsPressedPreviousTick = dodgeKeybind.isPressed();
-        if (!shouldDodge) return;
+        if (!shouldDodge)
+            return;
 
         // Actually dodge
         MinecraftClient client = MinecraftClient.getInstance();
@@ -150,7 +156,8 @@ public class Dodge {
 
         // Check the cooldown first
         long time = entity.getEntityWorld().getTime();
-        if (time <= lastDodgeUseTime + DODGE_COOLDOWN_TIME) return;
+        if (time <= lastDodgeUseTime + DODGE_COOLDOWN_TIME)
+            return;
 
         // OK, do a dodge.
         lastDodgeUseTime = time;
@@ -160,7 +167,7 @@ public class Dodge {
         setInvulnerableDodge(true);
 
         // Dodge according to keys pressed
-        double yaw = entity.getYaw();  // Head yaw
+        double yaw = entity.getYaw(); // Head yaw
         if (forwardKeyPressed && leftKeyPressed) {
             yaw += 315.0;
         } else if (backKeyPressed && leftKeyPressed) {
@@ -181,27 +188,41 @@ public class Dodge {
         // Convert yaw from degrees (above) to radians (below)
         yaw = yaw / 180.0 * Math.PI;
         double ySpeed;
-        if (entity.isOnGround()) {ySpeed = 0.2;} else {ySpeed = 0.0;}
-        
+        if (entity.isOnGround()) {
+            ySpeed = 0.2;
+        } else {
+            ySpeed = 0.0;
+        }
+
         double groundSpeedHandicap;
-        if (entity.isOnGround()) {groundSpeedHandicap = 1;} else {groundSpeedHandicap = 0.6;}
+        if (entity.isOnGround()) {
+            groundSpeedHandicap = 1;
+        } else {
+            groundSpeedHandicap = 0.6;
+        }
 
         double sprintSpeedHandicap;
-        if (entity.isSprinting()) {sprintSpeedHandicap = 0.7;} else {sprintSpeedHandicap = 1;}
+        if (entity.isSprinting()) {
+            sprintSpeedHandicap = 0.7;
+        } else {
+            sprintSpeedHandicap = 1;
+        }
 
         double dodgeSpeedResult;
         dodgeSpeedResult = SPEED * groundSpeedHandicap * sprintSpeedHandicap;
 
         entity.addVelocity(
                 -Math.sin(yaw) * dodgeSpeedResult, ySpeed, Math.cos(yaw) * dodgeSpeedResult);
-                entity.addExhaustion(1.0f);
+        entity.addExhaustion(1.0f);
     }
 
     public float getFill() {
         long time = getEntity().getEntityWorld().getTime();
-        float fill = 1.0f - (float)(time - lastDodgeUseTime) / (float)(DODGE_COOLDOWN_TIME);
-        if (fill < 0.0f) fill = 0.0f;
-        if (fill > 1.0f) fill = 1.0f;
+        float fill = 1.0f - (float) (time - lastDodgeUseTime) / (float) (DODGE_COOLDOWN_TIME);
+        if (fill < 0.0f)
+            fill = 0.0f;
+        if (fill > 1.0f)
+            fill = 1.0f;
         return fill;
     }
 }

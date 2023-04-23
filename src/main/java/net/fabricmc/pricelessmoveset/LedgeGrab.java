@@ -13,7 +13,7 @@ import net.minecraft.world.World;
 public class LedgeGrab {
     public boolean wasJumpKeyPressed = false;
 
-    public void tick() {        
+    public void tick() {
         MinecraftClient client = MinecraftClient.getInstance();
 
         // Rising edge detection
@@ -22,14 +22,17 @@ public class LedgeGrab {
         boolean jumpKeyNewlyPressed = !wasJumpKeyPressed && jumpKeyIsPressed;
         wasJumpKeyPressed = jumpKeyIsPressed;
 
-        if (!jumpKeyNewlyPressed) return;
+        if (!jumpKeyNewlyPressed)
+            return;
 
         // Is the player on the ground.
         ClientPlayerEntity player = client.player;
-        if (player.isOnGround()) return;  // TODO: this is a bug
+        if (player.isOnGround())
+            return; // TODO: this is a bug
 
         // Is the player next to a ledge.
-        if (!isNearLedge(player.getBlockPos())) return;
+        if (!isNearLedge(player.getBlockPos()))
+            return;
 
         // Do a jump.
         player.setVelocity(player.getVelocity().x, 0.4f, player.getVelocity().z);
@@ -37,14 +40,11 @@ public class LedgeGrab {
     }
 
     public boolean isNearLedge(BlockPos blockPos) {
-        return
-            (
-                isLedge(blockPos.add(-1, 0, 0)) ||
+        return (isLedge(blockPos.add(-1, 0, 0)) ||
                 isLedge(blockPos.add(+1, 0, 0)) ||
                 isLedge(blockPos.add(0, 0, 0)) ||
                 isLedge(blockPos.add(0, 0, -1)) ||
-                isLedge(blockPos.add(0, 0, 1))
-            ) && isEmpty(blockPos.add(0, -1, 0));
+                isLedge(blockPos.add(0, 0, 1))) && isEmpty(blockPos.add(0, -1, 0));
     }
 
     public boolean isLedge(BlockPos blockPos) {

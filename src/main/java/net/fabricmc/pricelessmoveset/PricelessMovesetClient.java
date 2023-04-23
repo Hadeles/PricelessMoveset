@@ -30,15 +30,16 @@ public class PricelessMovesetClient implements ClientModInitializer {
 
 		// Spin attack
 		SPIN_ATTACK_PARTICLE = Registry.register(
-			Registry.PARTICLE_TYPE,
-			"pricelessmoveset:spin_attack",
-			FabricParticleTypes.simple(true));
+				Registry.PARTICLE_TYPE,
+				"pricelessmoveset:spin_attack",
+				FabricParticleTypes.simple(true));
 		ParticleFactoryRegistry.getInstance().register(SPIN_ATTACK_PARTICLE, SpinAttackParticle.Factory::new);
-		
+
 		ClientTickEvents.END_CLIENT_TICK.register(client -> {
 			// Don't run until there is an entity. There lies madness!
 			ClientPlayerEntity entity = client.player;
-			if (entity == null) return;
+			if (entity == null)
+				return;
 
 			dodge.tick();
 			// ledgeGrab.tick();
@@ -49,9 +50,9 @@ public class PricelessMovesetClient implements ClientModInitializer {
 		});
 
 		ClientPlayNetworking.registerGlobalReceiver(
-			Pogo.POGO_CHANNEL_ID,
-			(client, handler, buf, responseSender) -> {
-				pogo.tryPogo(client.player);
-			});
+				Pogo.POGO_CHANNEL_ID,
+				(client, handler, buf, responseSender) -> {
+					pogo.tryPogo(client.player);
+				});
 	}
 }
