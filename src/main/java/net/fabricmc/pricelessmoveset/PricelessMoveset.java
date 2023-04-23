@@ -28,7 +28,7 @@ public class PricelessMoveset implements ModInitializer {
 
 		ServerTickEvents.END_SERVER_TICK.register(server -> {
 			server.getPlayerManager().getPlayerList().forEach(player -> {
-				Pogo.tick(player);
+				// Pogo.tick(player);
 			});
 		});
 
