@@ -18,6 +18,7 @@ import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.network.PacketByteBuf;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
+import net.minecraft.util.Hand;
 
 public class Pull {
     public static Identifier PULL_CHANNEL_ID = new Identifier("pricelessmoveset:pull_channel");
@@ -69,6 +70,9 @@ public class Pull {
         Entity target = ((EntityHitResult) client.crosshairTarget).getEntity();
         if (target == null)
             return;
+
+        // added hang swing to make it make more sense
+        client.player.swingHand(Hand.MAIN_HAND);
 
         // Send a packet to pull the target.
         PacketByteBuf buf = PacketByteBufs.create();
