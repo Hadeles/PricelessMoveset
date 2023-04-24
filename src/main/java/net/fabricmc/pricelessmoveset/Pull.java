@@ -44,6 +44,10 @@ public class Pull {
     }
 
     public void tick() {
+        // Must not be holding a sword.
+        if (getPlayer().getMainHandStack().getItem() instanceof net.minecraft.item.SwordItem)
+            return;
+
         // Rising edge detection
         boolean shouldPull = !keybindIsPressedPreviousTick && (pullKeybind.isPressed() || pullKeybind.wasPressed());
         ClientPlayerEntity entity = MinecraftClient.getInstance().player;

@@ -31,6 +31,7 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
+import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 
 public class SpinAttack {
     public static Identifier SPIN_ATTACK_CHANNEL_ID = new Identifier("pricelessmoveset:spin_attack_channel");
@@ -52,6 +53,10 @@ public class SpinAttack {
     }
 
     public void tick() {
+        // Must be holding a sword.
+        if (!(client.player.getMainHandStack().getItem() instanceof net.minecraft.item.SwordItem))
+            return;
+
         // Rising edge detection
         boolean shouldSpinAttack = !keybindIsPressedPreviousTick
                 && (spinAttackKeybind.isPressed() || spinAttackKeybind.wasPressed());
