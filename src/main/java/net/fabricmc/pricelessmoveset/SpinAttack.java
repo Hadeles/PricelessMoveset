@@ -127,7 +127,7 @@ public class SpinAttack {
             ((ServerWorld) player.world).spawnParticles(
                     PricelessMovesetClient.SPIN_ATTACK_PARTICLE,
                     player.getX(),
-                    player.getBodyY(0.5),
+                    player.getBodyY(0.65),
                     player.getZ(),
                     0, 0.0, 0.0, 0.0, 0.0);
         }
