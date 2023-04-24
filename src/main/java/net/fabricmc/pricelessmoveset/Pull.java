@@ -27,16 +27,11 @@ public class Pull {
     public static double PULL_DISTANCE = 4.5;
     public static double SPEED = 0.75;
     public long lastPullUseTime = 0L;
-    KeyBinding pullKeybind;
+    public KeyBinding keyBinding;
     public boolean keybindIsPressedPreviousTick = false;
 
-    Pull() {
-        pullKeybind = new KeyBinding(
-                "key.pricelessmoveset.pull_keybind",
-                InputUtil.Type.KEYSYM,
-                GLFW.GLFW_KEY_V,
-                "category." + PricelessMoveset.MODID);
-        KeyBindingHelper.registerKeyBinding(pullKeybind);
+    Pull(KeyBinding keyBinding) {
+        this.keyBinding = keyBinding;
     }
 
     public ClientPlayerEntity getPlayer() {
@@ -49,11 +44,11 @@ public class Pull {
             return;
 
         // Rising edge detection
-        boolean shouldPull = !keybindIsPressedPreviousTick && (pullKeybind.isPressed() || pullKeybind.wasPressed());
+        boolean shouldPull = !keybindIsPressedPreviousTick && (keyBinding.isPressed() || keyBinding.wasPressed());
         ClientPlayerEntity entity = MinecraftClient.getInstance().player;
-        while (pullKeybind.wasPressed())
+        while (keyBinding.wasPressed())
             ; // Consume the counter
-        keybindIsPressedPreviousTick = pullKeybind.isPressed();
+        keybindIsPressedPreviousTick = keyBinding.isPressed();
         if (!shouldPull)
             return;
 

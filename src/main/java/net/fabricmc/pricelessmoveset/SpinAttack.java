@@ -37,19 +37,13 @@ public class SpinAttack {
     public static Identifier SPIN_ATTACK_CHANNEL_ID = new Identifier("pricelessmoveset:spin_attack_channel");
     public static long SPIN_ATTACK_COOLDOWN_TIME = 30;
     public MinecraftClient client;
-    public KeyBinding spinAttackKeybind;
+    public KeyBinding keyBinding;
     public boolean keybindIsPressedPreviousTick = false;
     public long lastSpinAttackUseTime = 0L;
 
-    SpinAttack() {
+    SpinAttack(KeyBinding keyBinding) {
+        this.keyBinding = keyBinding;
         client = MinecraftClient.getInstance();
-
-        spinAttackKeybind = new KeyBinding(
-                "key.pricelessmoveset.spinAttack_keybind",
-                InputUtil.Type.KEYSYM,
-                GLFW.GLFW_KEY_G,
-                "category." + PricelessMoveset.MODID);
-        KeyBindingHelper.registerKeyBinding(spinAttackKeybind);
     }
 
     public void tick() {
@@ -59,10 +53,10 @@ public class SpinAttack {
 
         // Rising edge detection
         boolean shouldSpinAttack = !keybindIsPressedPreviousTick
-                && (spinAttackKeybind.isPressed() || spinAttackKeybind.wasPressed());
-        while (spinAttackKeybind.wasPressed())
+                && (keyBinding.isPressed() || keyBinding.wasPressed());
+        while (keyBinding.wasPressed())
             ; // Consume the counter
-        keybindIsPressedPreviousTick = spinAttackKeybind.isPressed();
+        keybindIsPressedPreviousTick = keyBinding.isPressed();
         if (!shouldSpinAttack)
             return;
 
