@@ -69,6 +69,9 @@ public class SpinAttack {
         // Actually spin attack
         lastSpinAttackUseTime = time;
         ClientPlayNetworking.send(SPIN_ATTACK_CHANNEL_ID, PacketByteBufs.create());
+
+        // Swing the hand to make more sense
+        client.player.swingHand(Hand.MAIN_HAND);
     }
 
     // Server side code
