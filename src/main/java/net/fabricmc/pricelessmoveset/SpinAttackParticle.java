@@ -31,7 +31,7 @@ public class SpinAttackParticle
         super(clientWorld, d, e, f, 0.0, 0.0, 0.0);
         this.spriteProvider = spriteProvider;
         this.scale = 1.75f;
-        this.maxAge = 10;
+        this.maxAge = 7;
         this.alpha = 1.0f;
         this.gravityStrength = 0.0f;
         this.velocityX = 0.0;
