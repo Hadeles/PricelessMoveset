@@ -58,8 +58,6 @@ public class Pull {
         if (time <= lastPullUseTime + PULL_COOLDOWN_TIME)
             return;
 
-        lastPullUseTime = time;
-
         // Actually pull
         MinecraftClient client = MinecraftClient.getInstance();
         ClientPlayerEntity player = getPlayer();
@@ -70,6 +68,8 @@ public class Pull {
         Entity target = ((EntityHitResult) client.crosshairTarget).getEntity();
         if (target == null)
             return;
+
+        lastPullUseTime = time;
 
         // added hang swing to make it make more sense
         client.player.swingHand(Hand.MAIN_HAND);

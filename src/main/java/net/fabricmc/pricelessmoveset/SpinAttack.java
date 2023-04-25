@@ -35,7 +35,7 @@ import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 
 public class SpinAttack {
     public static Identifier SPIN_ATTACK_CHANNEL_ID = new Identifier("pricelessmoveset:spin_attack_channel");
-    public static long SPIN_ATTACK_COOLDOWN_TIME = 30;
+    public static long SPIN_ATTACK_COOLDOWN_TIME = 100;
     public MinecraftClient client;
     public KeyBinding keyBinding;
     public boolean keybindIsPressedPreviousTick = false;
