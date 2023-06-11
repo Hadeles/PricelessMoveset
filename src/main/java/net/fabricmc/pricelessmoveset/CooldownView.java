@@ -48,26 +48,28 @@ public class CooldownView
 			{ // Background
 				int u = 27;
 				int v = 0;
-				drawTexture(matrixStack, x, y - barHeight, u, v, barWidth, barHeight, textureWidth, textureHeight);
+				drawTexture(matrixStack, x - 108, y + 18 - barHeight, u, v, barWidth, barHeight, textureWidth,
+						textureHeight);
 			}
 			{ // Foreground
 				int h = (int) (dodge.getFill() * barHeight);
 				int u = 18;
 				int v = barHeight - h;
-				drawTexture(matrixStack, x, y - h, u, v, barWidth, h, textureWidth, textureHeight);
+				drawTexture(matrixStack, x - 108, y + 18 - h, u, v, barWidth, h, textureWidth, textureHeight);
 			}
 
 			// Spin attack is red
 			{ // Background
 				int u = 9;
 				int v = 0;
-				drawTexture(matrixStack, x + 9, y - barHeight, u, v, barWidth, barHeight, textureWidth, textureHeight);
+				drawTexture(matrixStack, x - 98, y + 18 - barHeight, u, v, barWidth, barHeight, textureWidth,
+						textureHeight);
 			}
 			{ // Foreground
 				int h = (int) (spinAttack.getFill() * barHeight);
 				int u = 0;
 				int v = barHeight - h;
-				drawTexture(matrixStack, x + 9, y - h, u, v, barWidth, h, textureWidth, textureHeight);
+				drawTexture(matrixStack, x - 98, y + 18 - h, u, v, barWidth, h, textureWidth, textureHeight);
 			}
 		}
 
